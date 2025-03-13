@@ -1,14 +1,23 @@
 using UnityEngine;
+using Zenject;
 
 public class PlayerTurnState : AGameState
 {
+    private PlayerPawnHandler _playerPawnHandler;
+
+    [Inject]
+    public PlayerTurnState(PlayerPawnHandler playerPawnHandler)
+    {
+        _playerPawnHandler = playerPawnHandler;
+    }
+
     public override void Enter()
     {
-        base.Enter();
+        _playerPawnHandler.EnableInput(true);
     }
 
     public override void Exit()
     {
-        base.Exit();
+        _playerPawnHandler.EnableInput(false);
     }
 }

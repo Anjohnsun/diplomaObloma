@@ -14,22 +14,28 @@ public class GridManager
     private int _width;
 
     private Pawn _playerPawn;
-    private GameObject _tilePrefab;
+    private Vector2Int _playerStartPosition;
 
+    private GameObject _tilePrefab;
     private TileGenerator _tileGenerator;
 
-    public GridManager( [Inject(Id = "lineDestroyFrequency")] int lineDestroyFrequency,
+    private IPawnMoverService _moverService;
+
+    private Dictionary<Vector2Int, Tile> _tiles;
+
+    public GridManager([Inject(Id = "lineDestroyFrequency")] int lineDestroyFrequency,
         [Inject(Id = "linesUpToPlayer")] int linesUpToPlayer,
         [Inject(Id = "linesDownToPlayer")] int linesDownToPlayer,
-        [Inject(Id = "width")] int width, 
-        Pawn playerPawn,
+        [Inject(Id = "width")] int width,
+        [Inject(Id = "playerPawn")] Pawn playerPawn,
+        [Inject(Id = "playerStartPosition")] Vector2Int playerStartPosition, 
         [Inject(Id = "tilePrefab")] GameObject tilePrefab)
     {
         _lineDestroyFrequency = lineDestroyFrequency;
         _linesUpToPlayer = linesUpToPlayer;
         _linesDownToPlayer = linesDownToPlayer;
         _width = width;
-        _playerPawn = playerPawn;
+        _playerStartPosition = playerStartPosition;
         _tilePrefab = tilePrefab;
 
         _tileGenerator = new GameObject("TileGenerator").AddComponent<TileGenerator>();
@@ -48,10 +54,15 @@ public class GridManager
 
     }
 
-    void MovePawn(Transform pawn, Vector3Int to, bool isPlayer)
+    public Tile GetTileAt(Vector2Int point)
     {
-        //Change to pawnMoverService();
-        pawn.localPosition = to;
+        _tiles.TryGetValue(point, out Tile tile);
+        return tile;
+    }
+
+    public void MovePawnTo(Pawn pawn, Vector2Int newPosition)
+    {
+        _moverService.GridMoveTo(pawn, newPosition);
     }
 
     void OnAvailableTileClicked()
@@ -59,14 +70,18 @@ public class GridManager
         throw new NotImplementedException();
     }
 
-    bool IsBetweenBound()
+    public bool IsWithinBounds(Vector2Int point)
     {
-        throw new NotImplementedException();
+        return _tiles.TryGetValue(point, out Tile tile);
     }
 
-    void IsTileFree()
+    public bool IsTileFree(Vector2Int point)
     {
-        throw new NotImplementedException();
+        if(!_tiles.TryGetValue(point, out Tile tile))
+        {
+            throw new Exception("Try to get tile out of bounds");
+        }
+        return tile.IsFree;
     }
 }
 

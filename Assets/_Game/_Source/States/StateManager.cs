@@ -6,12 +6,6 @@ public class StateManager
 {
     private AGameState currentState;
 
-    private void Start()
-    {
-        // Ќачинаем игру со стартовой анимации
-        //ChangeState(new StartAnimationState());
-    }
-
     private void Update()
     {
         currentState?.Update();

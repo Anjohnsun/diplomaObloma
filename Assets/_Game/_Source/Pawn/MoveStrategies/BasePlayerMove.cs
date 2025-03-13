@@ -1,9 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class BasePlayerMove : IMoveStrategy
 {
-    public List<Vector2Int> GetPossibleMoves(GridManager gridManager, Vector2Int currentPosition)
+    private GridManager _gridManager;
+
+    [Inject]
+    public BasePlayerMove(GridManager gridManager)
+    {
+        _gridManager = gridManager;
+    }
+
+    public List<Vector2Int> GetPossibleMoves(Vector3Int currentPosition)
     {
         List<Vector2Int> moves = new List<Vector2Int>();
 
@@ -19,7 +28,7 @@ public class BasePlayerMove : IMoveStrategy
         // проверка на выход за границы поля
         foreach (var move in possibleMoves)
         {
-            //if (gridManager.IsWithinBounds(move))
+            if (_gridManager.IsWithinBounds(move) && _gridManager.IsTileFree(move))
             {
                 moves.Add(move);
             }
