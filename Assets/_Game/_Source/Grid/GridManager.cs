@@ -28,7 +28,7 @@ public class GridManager
         [Inject(Id = "linesDownToPlayer")] int linesDownToPlayer,
         [Inject(Id = "width")] int width,
         [Inject(Id = "playerPawn")] Pawn playerPawn,
-        [Inject(Id = "playerStartPosition")] Vector2Int playerStartPosition, 
+        [Inject(Id = "playerStartPosition")] Vector2Int playerStartPosition,
         [Inject(Id = "tilePrefab")] GameObject tilePrefab)
     {
         _lineDestroyFrequency = lineDestroyFrequency;
@@ -56,13 +56,18 @@ public class GridManager
 
     public Tile GetTileAt(Vector2Int point)
     {
-        _tiles.TryGetValue(point, out Tile tile);
+        if (!_tiles.TryGetValue(point, out Tile tile))
+        {
+            throw new Exception("Try to get tile out of bounds");
+        }
         return tile;
     }
 
     public void MovePawnTo(Pawn pawn, Vector2Int newPosition)
     {
+        GetTileAt(Vector2Int.CeilToInt(pawn.transform.position)).IsFree = true;
         _moverService.GridMoveTo(pawn, newPosition);
+        GetTileAt(Vector2Int.CeilToInt(pawn.transform.position)).IsFree = false;
     }
 
     void OnAvailableTileClicked()
@@ -77,11 +82,27 @@ public class GridManager
 
     public bool IsTileFree(Vector2Int point)
     {
-        if(!_tiles.TryGetValue(point, out Tile tile))
+        if (!_tiles.TryGetValue(point, out Tile tile))
         {
             throw new Exception("Try to get tile out of bounds");
         }
         return tile.IsFree;
+    }
+
+    public void HighlightTileGroup(List<Vector2Int> points)
+    {
+        foreach (Vector2Int point in points)
+        {
+            _tiles[point].Highlight(true);
+        }
+    }
+
+    public void DehighlightAllTiles()
+    {
+        foreach (var tile in _tiles.Values)
+        {
+            tile.Highlight(false);
+        }
     }
 }
 

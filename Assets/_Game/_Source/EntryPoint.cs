@@ -16,6 +16,8 @@ public class EntryPoint : MonoBehaviour
 
     IEnumerator Start()
     {
+        //запуск НОВОЙ игры
+
         //запуск стартовой анимации
         _stateManager.ChangeState(_startAnimationState);
         Debug.Log("EntryPoint: Start animation");

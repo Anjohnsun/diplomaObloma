@@ -16,7 +16,7 @@ public class Tile : MonoBehaviour
         _highlightedTile.color = new Color(_highlightedTile.color.r, _highlightedTile.color.g, _highlightedTile.color.b, 0);
     }
 
-    public void HighlightAsFree(bool v)
+    public void Highlight(bool v)
     {
         if (v)
         {

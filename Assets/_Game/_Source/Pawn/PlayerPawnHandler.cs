@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 public class PlayerPawnHandler : MonoBehaviour
 {
@@ -14,7 +15,8 @@ public class PlayerPawnHandler : MonoBehaviour
 
     private Action _onPlayerTurnStart;
 
-    private void Construct(Pawn pawn)
+    [Inject]
+    private void Construct(Pawn pawn, [Inject()]bool fromSave)
     {
         _input = new PlayerInput();
         _pawn = pawn;
@@ -22,7 +24,16 @@ public class PlayerPawnHandler : MonoBehaviour
         //подписки инпута
         _input.GameplayInput.DoAction.performed += context => DoAction();
 
+
         //наполнение playerPawn декораторами и действиями
+        if (fromSave)
+        {
+            //логика загрузка сохранённых данных
+            // load from SaveService()...
+        } else
+        {
+            
+        }
     }
 
     public void EnableInput(bool value)
@@ -31,6 +42,8 @@ public class PlayerPawnHandler : MonoBehaviour
             _input.Enable();
         else
             _input.Disable();
+
+        _onPlayerTurnStart.Invoke();
     }
 
     private void DoAction()

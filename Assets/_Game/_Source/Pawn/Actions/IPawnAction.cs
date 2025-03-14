@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public interface IPawnAction
 {
-    void DoAction();
+    List<Vector2Int> CalculateTargets();
+    void Perform(Vector2Int point);
 }

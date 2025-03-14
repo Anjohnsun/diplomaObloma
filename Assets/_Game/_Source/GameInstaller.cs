@@ -49,6 +49,6 @@ public class GameInstaller : MonoInstaller
 
         //REWRITE THIS FOR SMTH адекватное
         Container.Bind<PawnStatsSO>().FromInstance(_pawnStats);
-        Container.Bind<BasePlayerMove>();
+        Container.Bind<BasePlayerMove>().AsSingle();
     }
 }
