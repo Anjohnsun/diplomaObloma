@@ -8,11 +8,11 @@ public class PawnMoverService : IPawnMoverService
 
     public float DURATION = 0.5f;
 
-    public PawnMoverService(AnimationCurve gridMoveCurve, AnimationCurve appearMoveCurve, float duration)
+    public PawnMoverService(MoverSettingsSO settings)
     {
-        _gridMoveCurve = gridMoveCurve;
-        _appearMoveCurve = appearMoveCurve;
-        DURATION = duration;
+        _gridMoveCurve = settings.GridMoveCurve;
+        _appearMoveCurve = settings.GridMoveCurve;
+        DURATION = settings.Duration;
     }
 
     public void AppearMoveTo(Pawn pawn, Vector2 to)

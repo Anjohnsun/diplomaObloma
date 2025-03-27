@@ -4,10 +4,12 @@ using UnityEngine;
 public class ArmorDecorator : PawnStatsDecorator
 {
     private int _armor;
-    public ArmorDecorator(IPawnStats wrappedStats, int armor) : base(wrappedStats)
+    public ArmorDecorator(int lifetime, int armor) : base(lifetime)
     {
         _armor = armor;
     }
+
+
 
     public override void TakeDamage(int damage)
     {

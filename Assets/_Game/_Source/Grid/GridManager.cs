@@ -29,12 +29,14 @@ public class GridManager
         [Inject(Id = "width")] int width,
         [Inject(Id = "playerPawn")] Pawn playerPawn,
         [Inject(Id = "playerStartPosition")] Vector2Int playerStartPosition,
-        [Inject(Id = "tilePrefab")] GameObject tilePrefab)
+        [Inject(Id = "tilePrefab")] GameObject tilePrefab,
+        IPawnMoverService moverService)
     {
         _lineDestroyFrequency = lineDestroyFrequency;
         _linesUpToPlayer = linesUpToPlayer;
         _linesDownToPlayer = linesDownToPlayer;
         _width = width;
+        _playerPawn = playerPawn;
         _playerStartPosition = playerStartPosition;
         _tilePrefab = tilePrefab;
 
@@ -42,6 +44,8 @@ public class GridManager
         _tileGenerator.enabled = true;
 
         _tileGenerator.Construct(_width, _tilePrefab);
+
+        _moverService = moverService;
     }
 
     public void CreateStartLines()
@@ -70,6 +74,11 @@ public class GridManager
         GetTileAt(Vector2Int.CeilToInt(pawn.transform.position)).IsFree = false;
     }
 
+    public void SetPlayerPawnToStartPosition()
+    {
+        _moverService.AppearMoveTo(_playerPawn, _playerStartPosition);
+    }
+
     void OnAvailableTileClicked()
     {
         throw new NotImplementedException();
@@ -89,11 +98,11 @@ public class GridManager
         return tile.IsFree;
     }
 
-    public void HighlightTileGroup(List<Vector2Int> points)
+    public void HighlightTileGroup(List<Vector2Int> points, TileHighlightType t)
     {
         foreach (Vector2Int point in points)
         {
-            _tiles[point].Highlight(true);
+            _tiles[point].Highlight(t);
         }
     }
 
@@ -101,7 +110,7 @@ public class GridManager
     {
         foreach (var tile in _tiles.Values)
         {
-            tile.Highlight(false);
+            tile.Dehighlight();
         }
     }
 }

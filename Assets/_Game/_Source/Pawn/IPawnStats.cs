@@ -10,4 +10,5 @@ public interface IPawnStats
     void TakeDamage(int damage);
     void IncreaseHealth(int amount);
     void UseAction();
+    void StartTurnUpdate();
 }

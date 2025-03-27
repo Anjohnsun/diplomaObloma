@@ -4,22 +4,20 @@ using Zenject;
 
 public class StartAnimationState : AGameState
 {
-    private  StateManager _gameManager;
+    private  StateManager _stateManager;
+    private PlayerTurnState _playerTurnState;
     private  GridManager _gridManager;
     private IGameplayUIService _gameplayUIService;
     private  MonoBehaviour _coroutines;
-    
-    private StateManager _stateManager;
-    private PlayerTurnState _playerTurnState;
-
+  
     [Inject]
     public StartAnimationState(
-        StateManager gameManager,
+        StateManager stateManager,
         GridManager gridManager,
         IGameplayUIService gameplayUIService,
         MonoBehaviour coroutines)
     {
-        _gameManager = gameManager;
+        _stateManager = stateManager;
         _gridManager = gridManager;
         _gameplayUIService = gameplayUIService;
         _coroutines = coroutines;
@@ -35,17 +33,15 @@ public class StartAnimationState : AGameState
     {
         // 1. Генерация поля
         _gridManager.CreateStartLines();
+        _gridManager.SetPlayerPawnToStartPosition();
 
         // 2. Появление UI
         _gameplayUIService.ShowGameplayInterface();
 
-        // 3. Размещение пешки игрока
-        //Vector2Int playerStartPosition = new Vector2Int(0, 0); // Пример начальной позиции
-        //_playerPawn.SetPosition(playerStartPosition);
-        //yield return StartCoroutine(_playerPawn.PlaySpawnAnimation());
+
 
         // Переход к следующему состоянию 
-        _gameManager.ChangeState(_playerTurnState);
+        _stateManager.ChangeState(_playerTurnState);
 
         return null;
     }

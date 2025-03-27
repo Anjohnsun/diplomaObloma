@@ -3,12 +3,20 @@ using UnityEngine;
 public class PawnStatsDecorator : IPawnStats
 {
     protected IPawnStats _wrappedStats;
+    protected int _lifeTime;
+
     public virtual int MaxHealth => _wrappedStats.MaxHealth;
     public virtual int CurrentHealth => _wrappedStats.CurrentHealth;
     public virtual int MaxActionPoints => _wrappedStats.MaxActionPoints;
     public virtual int ActionPointsLeft => _wrappedStats.ActionPointsLeft;
+    public int LifeTime => _lifeTime;
+    
+    public PawnStatsDecorator(int lifeTime)
+    {
+        _lifeTime = lifeTime;
+    }
 
-    public PawnStatsDecorator(IPawnStats wrappedStats)
+    public void Construct(IPawnStats wrappedStats)
     {
         _wrappedStats = wrappedStats;
     }
@@ -26,5 +34,11 @@ public class PawnStatsDecorator : IPawnStats
     public virtual void UseAction()
     {
         _wrappedStats.UseAction();
+    }
+
+    public void StartTurnUpdate()
+    {
+        _lifeTime--;
+        _wrappedStats?.StartTurnUpdate();
     }
 }

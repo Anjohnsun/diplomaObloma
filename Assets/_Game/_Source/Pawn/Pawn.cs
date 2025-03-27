@@ -1,26 +1,39 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
 public class Pawn : MonoBehaviour
 {
-    private PawnStats _pawnStats;
-    private  GridManager _gridManager;
+    private IPawnStats _pawnStats;
+    private GridManager _gridManager;
 
-    private List<IPawnAction> _actions;
+    private Dictionary<Type, IPawnAction> _actions;
 
     public GridManager GridManager => _gridManager;
+    public IPawnStats PawnStats => _pawnStats;
+    public Dictionary<Type, IPawnAction> Actions => _actions;
 
-    [Inject]
-    public void Construct(PawnStats pawnStats, GridManager gridManager)
+    public void Construct(PawnStatsSO pawnStats, GridManager gridManager)
     {
-        _pawnStats = pawnStats;
+        _pawnStats = new PawnStats(pawnStats.MaxHealth, pawnStats.CurrentHealth, pawnStats.MaxActionPoints, pawnStats.ActionPointsLeft);
         _gridManager = gridManager;
         Debug.Log($"Pawn created. MaxHP: {_pawnStats.MaxHealth}, MaxActions: {_pawnStats.MaxActionPoints}");
     }
 
-    public void AddPossibleAction(IPawnAction newAction)
+    public void AddAction(IPawnAction newAction)
     {
-        _actions.Add(newAction);
+        _actions.Add(newAction.GetType(), newAction);
+    }
+
+    public void AddEffect(PawnStatsDecorator newEffect)
+    {
+        newEffect.Construct(_pawnStats);
+        _pawnStats = newEffect;
+    }
+
+    public void HandleStartOfTurn()
+    {
+        _pawnStats.StartTurnUpdate();
     }
 }

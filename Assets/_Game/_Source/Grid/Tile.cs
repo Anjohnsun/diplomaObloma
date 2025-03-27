@@ -7,25 +7,52 @@ public class Tile : MonoBehaviour
     //заменить на хранение объекта(пешки, препятствия(?)), занимающего клетку
     public bool IsFree;
 
-    [SerializeField] private SpriteRenderer _highlightedTile;
-    [SerializeField] private float _highlightAnimDuration;
+    [SerializeField] private SpriteRenderer _tile;
+    [SerializeField] private SpriteRenderer _moveHighlight;
+    [SerializeField] private SpriteRenderer _attackHighlight;
+    private float _animDuration;
+    private float _targetAlfa;
 
     private void Start()
     {
         IsFree = true;
-        _highlightedTile.color = new Color(_highlightedTile.color.r, _highlightedTile.color.g, _highlightedTile.color.b, 0);
+        _moveHighlight.color = new Color(_moveHighlight.color.r, _moveHighlight.color.g, _moveHighlight.color.b, 0);
+        _attackHighlight.color = new Color(_attackHighlight.color.r, _attackHighlight.color.g, _attackHighlight.color.b, 0);
     }
 
-    public void Highlight(bool v)
+    public void Construct(GridSpritesSO sprites)
     {
-        if (v)
+        _tile.sprite = sprites.TileSprite;
+        _moveHighlight.sprite = sprites.MoveHighlighted;
+        _attackHighlight.sprite = sprites.AttackHighlighted;
+
+        _animDuration = sprites.AnimDuration;
+    }
+
+    public void Highlight(TileHighlightType t)
+    {
+        DOTween.Kill(transform);
+        if (t == TileHighlightType.move)
         {
-            _highlightedTile.DOColor(new Color(_highlightedTile.color.r, _highlightedTile.color.g, _highlightedTile.color.b, 1), 
-                _highlightAnimDuration);
-        } else
-        {
-            _highlightedTile.DOColor(new Color(_highlightedTile.color.r, _highlightedTile.color.g, _highlightedTile.color.b, 0),
-                _highlightAnimDuration);
+            _moveHighlight.DOColor(new Color(_moveHighlight.color.r, _moveHighlight.color.g, _moveHighlight.color.b, _targetAlfa),
+                 _animDuration);
+            _attackHighlight.DOColor(new Color(_attackHighlight.color.r, _attackHighlight.color.g, _attackHighlight.color.b, 0),
+                 _animDuration);
         }
+        else if(t == TileHighlightType.attack)
+        {
+            _attackHighlight.DOColor(new Color(_attackHighlight.color.r, _attackHighlight.color.g, _attackHighlight.color.b, _targetAlfa),
+                 _animDuration);
+            _moveHighlight.DOColor(new Color(_moveHighlight.color.r, _moveHighlight.color.g, _moveHighlight.color.b, 0),
+                 _animDuration);
+        }
+    }
+
+    public void Dehighlight()
+    {
+        _attackHighlight.DOColor(new Color(_attackHighlight.color.r, _attackHighlight.color.g, _attackHighlight.color.b, 0),
+                 _animDuration);
+        _moveHighlight.DOColor(new Color(_moveHighlight.color.r, _moveHighlight.color.g, _moveHighlight.color.b, 0),
+                 _animDuration);
     }
 }

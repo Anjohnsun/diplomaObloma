@@ -9,7 +9,7 @@ public class PawnStats : IPawnStats
 
     public int MaxHealth => _maxHealth;
     public int CurrentHealth => _currentHealth;
-    public int MaxActionPoints => MaxActionPoints;
+    public int MaxActionPoints => _maxActionPoints;
     public int ActionPointsLeft => _actionPointsLeft;
 
     public PawnStats(int maxHealth, int currentHealth, int maxActionPoints, int actionPointsLeft)
@@ -39,5 +39,10 @@ public class PawnStats : IPawnStats
         {
             throw new System.Exception("HANDLE ZERO HP");
         }
+    }
+
+    public void StartTurnUpdate()
+    {
+        throw new System.NotImplementedException();
     }
 }
