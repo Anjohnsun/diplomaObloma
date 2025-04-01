@@ -7,19 +7,18 @@ public class StartAnimationState : AGameState
     private  StateManager _stateManager;
     private PlayerTurnState _playerTurnState;
     private  GridManager _gridManager;
-    private IGameplayUIService _gameplayUIService;
     private  MonoBehaviour _coroutines;
   
     [Inject]
     public StartAnimationState(
         StateManager stateManager,
+        PlayerTurnState playerTurnState,
         GridManager gridManager,
-        IGameplayUIService gameplayUIService,
         MonoBehaviour coroutines)
     {
         _stateManager = stateManager;
+        _playerTurnState = playerTurnState;
         _gridManager = gridManager;
-        _gameplayUIService = gameplayUIService;
         _coroutines = coroutines;
     }
 
@@ -35,19 +34,14 @@ public class StartAnimationState : AGameState
         _gridManager.CreateStartLines();
         _gridManager.SetPlayerPawnToStartPosition();
 
-        // 2. Появление UI
-        _gameplayUIService.ShowGameplayInterface();
-
-
-
+        yield return new WaitForSeconds(3f);
         // Переход к следующему состоянию 
         _stateManager.ChangeState(_playerTurnState);
 
-        return null;
+        yield return null;
     }
 
     public override void Exit()
     {
-        Debug.Log("Exiting Start Animation State");
     }
 }

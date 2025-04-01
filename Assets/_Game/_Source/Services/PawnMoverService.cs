@@ -8,6 +8,9 @@ public class PawnMoverService : IPawnMoverService
 
     public float DURATION = 0.5f;
 
+    public float GridDuration => DURATION;
+    public float AppearDuration => DURATION;
+
     public PawnMoverService(MoverSettingsSO settings)
     {
         _gridMoveCurve = settings.GridMoveCurve;

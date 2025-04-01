@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c281692306ec1d44ab86a93b2157e17, type: 3}
   m_Name: PlayerBaseStats
   m_EditorClassIdentifier: 
+  _pawnType: 0
   _maxHealth: 3
   _currentHealth: 3
-  _maxActionPoints: 1
-  _actionPointsLeft: 1
+  _maxActionPoints: 5
+  _actionPointsLeft: 5

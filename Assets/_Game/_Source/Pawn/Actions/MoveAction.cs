@@ -8,6 +8,11 @@ public class MoveAction : IPawnAction
     private IMoveStrategy _moveStrategy;
     private GridManager _gridManager;
 
+    private List<Vector2Int> _possibleMoves;
+
+    public Pawn pawn => _pawn;
+    public float duration => 0.6f;
+
     public MoveAction(Pawn pawn, IMoveStrategy moveStrategy, GridManager gridManager)
     {
         _pawn = pawn;
@@ -15,18 +20,18 @@ public class MoveAction : IPawnAction
         _gridManager = gridManager;
     }
 
-    public Pawn pawn => _pawn;
-
     public List<Vector2Int> CalculateTargets()
     {
-        return _moveStrategy.GetPossibleMoves(Vector3Int.CeilToInt(_pawn.transform.position));
+        _possibleMoves =  _moveStrategy.GetPossibleMoves(Vector3Int.CeilToInt(_pawn.transform.position));
+        return _possibleMoves;
     }
 
     public void Perform(Vector2Int point)
     {
-        if (_moveStrategy.GetPossibleMoves(Vector3Int.CeilToInt(_pawn.transform.position)).Contains(point))
+        if (_possibleMoves.Contains(point))
         {
             _gridManager.MovePawnTo(_pawn, point);
+            _pawn.PawnStats.UseAction();
         } else
         {
             throw new Exception("Tried to get point out of PossibleMoves");

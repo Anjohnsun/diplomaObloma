@@ -6,7 +6,6 @@ public class PlusMove : IMoveStrategy
 {
     private GridManager _gridManager;
 
-    [Inject]
     public PlusMove(GridManager gridManager)
     {
         _gridManager = gridManager;

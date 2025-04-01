@@ -10,8 +10,10 @@ public class GameInstaller : MonoInstaller
 
     [Header("PlayerPawn")]
     [SerializeField] private Pawn _playerPawn;
+    [SerializeField] private PlayerPawnHandler _pawnHandler;
 
     [Header("Grid Manager Settings")]
+    [SerializeField] private GridSettingsSO _gridSettings;
     [SerializeField] private int _lineDestroyFrequency;
     [SerializeField] private int _linesUpToPlayer;
     [SerializeField] private int _linesDownToPlayer;
@@ -31,15 +33,10 @@ public class GameInstaller : MonoInstaller
         Container.Bind<GridManager>().AsSingle();
 
         //Бинды для grid manager
+        Container.Bind<GridSettingsSO>().FromInstance(_gridSettings);
         Container.Bind<Pawn>().WithId("playerPawn").FromInstance(_playerPawn);
-        Container.Bind<int>().WithId("lineDestroyFrequency").FromInstance(_lineDestroyFrequency);
-        Container.Bind<int>().WithId("linesUpToPlayer").FromInstance(_linesUpToPlayer);
-        Container.Bind<int>().WithId("linesDownToPlayer").FromInstance(_linesDownToPlayer);
-        Container.Bind<int>().WithId("width").FromInstance(_width);
-        Container.Bind<Vector2Int>().WithId("playerStartPosition").FromInstance(_playerStartPosition);
-        Container.Bind<GameObject>().WithId("tilePrefab").FromInstance(_tilePrefab);
 
-
+        Container.Bind<PlayerPawnHandler>().FromInstance(_pawnHandler);
 
         //Сервисы
         Container.Bind<IGameplayUIService>().FromComponentInHierarchy().AsSingle();
