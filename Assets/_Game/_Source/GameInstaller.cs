@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -20,10 +21,11 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private int _width;
     [SerializeField] private GameObject _tilePrefab;
     [SerializeField] Vector2Int _playerStartPosition;
+    [SerializeField] private Transform _camera;
 
     [Header("Mover service settings")]
     [SerializeField] private MoverSettingsSO _pawnMoverSettings;
-
+    [SerializeField] private List<PawnStatsSO> _pawnStatsSOs;
 
     public override void InstallBindings()
     {
@@ -31,11 +33,12 @@ public class GameInstaller : MonoInstaller
         //Зарегистрировать StateManager, GridManager, EnemyManager, PlayerPawn, UIManager
         Container.Bind<StateManager>().AsSingle();
         Container.Bind<GridManager>().AsSingle();
+        Container.Bind<EnemyManager>().AsSingle();
 
         //Бинды для grid manager
         Container.Bind<GridSettingsSO>().FromInstance(_gridSettings);
         Container.Bind<Pawn>().WithId("playerPawn").FromInstance(_playerPawn);
-
+        Container.Bind<Transform>().WithId("cameraTransform").FromInstance(_camera);
         Container.Bind<PlayerPawnHandler>().FromInstance(_pawnHandler);
 
         //Сервисы
@@ -55,5 +58,8 @@ public class GameInstaller : MonoInstaller
         //REWRITE THIS FOR SMTH адекватное
         Container.Bind<PawnStatsSO>().FromInstance(_pawnStats);
         Container.Bind<BasePlayerMove>().AsSingle();
+
+        //Фабрики
+        Container.Bind<List<PawnStatsSO>>().FromInstance(_pawnStatsSOs);
     }
 }

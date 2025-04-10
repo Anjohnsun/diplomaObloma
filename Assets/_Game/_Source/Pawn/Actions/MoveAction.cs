@@ -37,4 +37,14 @@ public class MoveAction : IPawnAction
             throw new Exception("Tried to get point out of PossibleMoves");
         }
     }
+
+    public void Cancel()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SelfRealize()
+    {
+        throw new NotImplementedException();
+    }
 }

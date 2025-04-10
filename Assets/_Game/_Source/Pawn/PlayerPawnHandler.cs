@@ -92,6 +92,7 @@ public class PlayerPawnHandler : MonoBehaviour
 
     private IEnumerator HandleEndOfAction(float delay)
     {
+        _input.Disable();
         yield return new WaitForSeconds(delay);
 
         if (_pawn.PawnStats.ActionPointsLeft <= 0)
@@ -103,6 +104,7 @@ public class PlayerPawnHandler : MonoBehaviour
         {
             ChooseAction();
         }
+        _input.Enable();
     }
 
     private void SkipTurn()

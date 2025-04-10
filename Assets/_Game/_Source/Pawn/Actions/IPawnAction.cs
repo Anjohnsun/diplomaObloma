@@ -7,4 +7,7 @@ public interface IPawnAction
     float duration { get; }
     List<Vector2Int> CalculateTargets();
     void Perform(Vector2Int point);
+    void Cancel();
+    void SelfRealize();
+
 }

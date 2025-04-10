@@ -1014,7 +1014,9 @@ MonoBehaviour:
   _width: 7
   _tilePrefab: {fileID: 8131002493246311568, guid: 4fd96ffe61520af4faaf11e26911cf74, type: 3}
   _playerStartPosition: {x: 0, y: 1}
+  _camera: {fileID: 519420032}
   _pawnMoverSettings: {fileID: 11400000, guid: 1b74272457452384a865d46e3689eab7, type: 2}
+  _pawnStatsSOs: []
 --- !u!114 &1661168050
 MonoBehaviour:
   m_ObjectHideFlags: 0

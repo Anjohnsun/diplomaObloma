@@ -1,3 +1,4 @@
+using DG.Tweening;
 using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
@@ -19,36 +20,42 @@ public class GridManager
     private Pawn _playerPawn;
     private Vector2Int _playerStartPosition;
 
-    private GameObject _tilePrefab;
     private TileGenerator _tileGenerator;
 
     private IPawnMoverService _moverService;
+    private EnemyManager _enemyManager;
 
     private Dictionary<Vector2Int, Tile> _tiles;
     private MonoBehaviour _coroutines;
 
+    private Transform _camera;
+
     public GridManager(GridSettingsSO gridSettings,
         [Inject(Id = "playerPawn")] Pawn playerPawn,
         IPawnMoverService moverService,
-        MonoBehaviour coroutines)
+        MonoBehaviour coroutines,
+        EnemyManager enemyManager,
+        [Inject(Id = "cameraTransform")] Transform camera)
     {
         _lineDestroyFrequency = gridSettings.LineDestroyFrequency;
         _linesUpToPlayer = gridSettings.LinesUpToPlayer;
         _linesDownToPlayer = gridSettings.LinesDownToPlayer;
         _width = gridSettings.Width;
         _playerStartPosition = gridSettings.PlayerStartPosition;
-        _tilePrefab = gridSettings.TilePrefab;
         _playerPawn = playerPawn;
         _coroutines = coroutines;
 
         _tileGenerator = new GameObject("TileGenerator").AddComponent<TileGenerator>();
         _tileGenerator.enabled = true;
 
-        _tileGenerator.Construct(_width, _tilePrefab, this);
+        _tileGenerator.Construct(_width, gridSettings.TilePrefab, this);
 
         _moverService = moverService;
 
         _tiles = new Dictionary<Vector2Int, Tile>();
+        _enemyManager = enemyManager;
+
+        _camera = camera;
     }
 
     public void CreateStartLines()
@@ -76,14 +83,6 @@ public class GridManager
 
         if (pawn.Equals(_playerPawn))
         {
-            /*if(newPosition.y >= _heightReached - _linesUpToPlayer)
-            {
-                while (newPosition.y >= _heightReached - _linesUpToPlayer)
-                {
-                    _tileGenerator.CreateLine(_heightReached + 1);
-                }
-            }*/
-            Debug.Log($"PLAYER HEIGHT: {_heightReached}");
             if (newPosition.y > _heightReached)
             {
                 for (int i = 0; i < newPosition.y - _heightReached; i++)
@@ -92,29 +91,35 @@ public class GridManager
                 }
                 _heightReached = newPosition.y;
             }
-
         }
     }
 
     private IEnumerator MovePawnToCor(Pawn pawn, Vector2Int newPosition)
     {
+        Debug.Log(_heightReached + " - reached height");
         GetTileAt(Vector2Int.CeilToInt(pawn.transform.position)).IsFree = true;
+        GetTileAt(Vector2Int.CeilToInt(pawn.transform.position)).Pawn = null;
         _moverService.GridMoveTo(pawn, newPosition);
 
         yield return new WaitForSeconds(_moverService.GridDuration);
 
+        if (pawn.Equals(_playerPawn))
+        {
+            if (_camera.position.y < newPosition.y)
+            {
+                Debug.Log("MoveCamera");
+                _camera.DOMoveY(newPosition.y, 0.3f);
+            }
+        }
+
         GetTileAt(Vector2Int.CeilToInt(pawn.transform.position)).IsFree = false;
+        GetTileAt(Vector2Int.CeilToInt(pawn.transform.position)).Pawn = pawn;
     }
 
     public void SetPlayerPawnToStartPosition()
     {
         _moverService.AppearMoveTo(_playerPawn, _playerStartPosition);
         _heightReached = Mathf.RoundToInt(_playerStartPosition.y);
-    }
-
-    void OnAvailableTileClicked()
-    {
-        throw new NotImplementedException();
     }
 
     public bool IsWithinBounds(Vector2Int point)
@@ -157,43 +162,21 @@ public class GridManager
 
     public void UpdateTimer()
     {
+        _turnsToDestroy--;
+        if (_turnsToDestroy == 0)
+        {
+            DestroyLine();
+            _turnsToDestroy = _lineDestroyFrequency;
+        }
+    }
+
+    private void DestroyLine()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void AddEnemy()
+    {
 
     }
 }
-
-
-/*    private Dictionary<Vector2, Tile> _tiles;
-
-    private int _currentHeight;
-    private int _width;
-
-    private TileGenerator _generator;
-    private GameObject _tilePrefab;
-    
-    public GridManager(int width, GameObject tilePrefab)
-    {
-        _width = width;
-        _tilePrefab = tilePrefab;
-
-        _generator = GameObject.Instantiate(new GameObject()).AddComponent<TileGenerator>();
-        _generator.Init(_width, _tilePrefab);
-    }
-
-    public void OnAvailableTileClicked()
-    {
-
-    }
-
-    public void CreateField(Action OnCreated)
-    {
-        //where to set height????
-        _generator.GenerateStartField(8, OnCreated);
-    }
-
-
-    internal bool IsWithinBounds(Vector2Int position)
-    {
-        Debug.Log($"Проверка позиции {position}, нынешняя высота {_currentHeight}, ширина {_width}");
-        return position.x >= -_width / 2 && position.x <= _width / 2 &&
-            position.y >= _currentHeight - _width / 2 && position.y <= _currentHeight + _width / 2;
-    }*/

@@ -6,6 +6,7 @@ public class Tile : MonoBehaviour
 {
     //заменить на хранение объекта(пешки, препятствия(?)), занимающего клетку
     public bool IsFree;
+    public Pawn Pawn;
 
     [SerializeField] private SpriteRenderer _YELLOWtile;
 

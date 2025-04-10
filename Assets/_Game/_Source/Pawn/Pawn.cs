@@ -14,7 +14,8 @@ public class Pawn : MonoBehaviour
     public IPawnStats PawnStats => _pawnStats;
     public Dictionary<Type, IPawnAction> Actions => _actions;
 
-    public Action OnActionListChanged;
+    //добавление спрайта в ui
+    //public Action OnActionListChanged;
 
     public void Construct(PawnStatsSO pawnStats, GridManager gridManager)
     {
