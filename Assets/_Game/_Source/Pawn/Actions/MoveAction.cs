@@ -1,40 +1,55 @@
+using DG.Tweening;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class MoveAction : IPawnAction
 {
-    private Pawn _pawn;
     private IMoveStrategy _moveStrategy;
-    private GridManager _gridManager;
 
-    private List<Vector2Int> _possibleMoves;
+    private List<FieldTile> _possibleMoves;
 
-    public Pawn pawn => _pawn;
-    public float duration => 0.6f;
+    public Pawn Pawn { get; private set; }
+    public float Duration => 0.6f;
 
-    public MoveAction(Pawn pawn, IMoveStrategy moveStrategy, GridManager gridManager)
+    public MoveAction(Pawn pawn, IMoveStrategy moveStrategy)
     {
-        _pawn = pawn;
+        Pawn = pawn;
         _moveStrategy = moveStrategy;
-        _gridManager = gridManager;
     }
 
-    public List<Vector2Int> CalculateTargets()
+    public List<FieldTile> CalculateTargets()
     {
-        _possibleMoves =  _moveStrategy.GetPossibleMoves(Vector3Int.CeilToInt(_pawn.transform.position));
+        _possibleMoves = _moveStrategy.GetPossibleMoves(Pawn.GridPosition);
         return _possibleMoves;
     }
 
-    public void Perform(Vector2Int point)
+
+    public void Perform(Vector2 targetWorldPosition, Action handler)
     {
-        if (_possibleMoves.Contains(point))
+        FieldTile targetTile = GridManager.Instance.WorldPositionToTile(targetWorldPosition);
+
+        if (targetTile != null && _possibleMoves.Contains(targetTile))
         {
-            _gridManager.MovePawnTo(_pawn, point);
-            _pawn.PawnStats.UseAction();
-        } else
+            GridManager.Instance.MovePawn(Pawn, targetTile);
+            Pawn.PawnStats.UseAction();
+
+            Pawn.transform.DOMove(targetTile.transform.position, Duration)
+                .OnComplete(() =>
+                {
+
+                    handler();
+                    return;
+                });
+
+            //HANDLE LAYER_ORDER UPDATE
+        }
+        else
         {
-            throw new Exception("Tried to get point out of PossibleMoves");
+            handler();
         }
     }
 

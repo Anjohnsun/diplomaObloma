@@ -1,12 +1,13 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public interface IPawnAction
 {
-    Pawn pawn { get; }
-    float duration { get; }
-    List<Vector2Int> CalculateTargets();
-    void Perform(Vector2Int point);
+    Pawn Pawn { get; }
+    float Duration { get; }
+    List<FieldTile> CalculateTargets();
+    void Perform(Vector2 point, Action handler);
     void Cancel();
     void SelfRealize();
 

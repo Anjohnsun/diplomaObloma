@@ -6,21 +6,33 @@ using Zenject.Asteroids;
 
 public class StateManager
 {
-    private AGameState currentState;
+    private readonly Dictionary<Type, IGameState> _states;
+    private IGameState _currentState;
 
-    //Dictionary<Type, AGameState> _states;
-
-    /*public StateManager (StartAnimationState a, PlayerTurnState b, EnemyTurnState c)
+    public StateManager(
+        StartAnimationState startAnimationState,
+        BattleState battleState,
+        UpgradeState upgradeState)
     {
-        _states.Add(a.GetType(), a);
-        _states.Add(b.GetType(), b);
-        _states.Add(c.GetType(), c);
-    }*/
+        _states = new Dictionary<Type, IGameState>
+        {
+            { typeof(StartAnimationState), startAnimationState },
+            { typeof(BattleState), battleState },
+            { typeof(UpgradeState), upgradeState}
+        };
 
-    public void ChangeState(AGameState newState) 
+    }
+
+    public void ChangeState<T>() where T : IGameState
     {
-        currentState?.Exit(); // Выход из текущего состояния
-        currentState = newState;
-        currentState.Enter(); // Вход в новое состояние
+        var stateType = typeof(T);
+
+        if (!_states.TryGetValue(stateType, out var newState))
+            Debug.LogError($"State {stateType.Name} is not registered");
+
+
+        _currentState?.Exit();
+        _currentState = newState;
+        _currentState.Enter();
     }
 }

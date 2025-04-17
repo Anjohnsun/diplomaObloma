@@ -1,46 +1,93 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Zenject;
 
 public class Pawn : MonoBehaviour
 {
-    private IPawnStats _pawnStats;
-    private GridManager _gridManager;
+    [SerializeField] protected StatConfigSO _HP;
+    [SerializeField] protected StatConfigSO _AP;
+    [SerializeField] protected StatConfigSO _STR;
+    [SerializeField] protected StatConfigSO _SPD;
+    [SerializeField] protected StatConfigSO _ARM;
+    [SerializeField] public readonly PawnTeam PawnTeam;
 
-    private Dictionary<Type, IPawnAction> _actions;
+    protected IPawnStats _pawnStats;
 
-    public GridManager GridManager => _gridManager;
+    public IPawnAction _moveAction;
+    public IPawnAction _attackAction;
+    protected Dictionary<Type, IPawnAction> _bonusActions = new Dictionary<Type, IPawnAction>();
+
+    public Action OnTurnBegin;
+    public Action OnTurnOver;
+    public Vector2Int GridPosition { get; protected set; }
+
     public IPawnStats PawnStats => _pawnStats;
-    public Dictionary<Type, IPawnAction> Actions => _actions;
+    public IReadOnlyDictionary<Type, IPawnAction> BonusActions => _bonusActions;
 
-    //добавление спрайта в ui
-    //public Action OnActionListChanged;
-
-    public void Construct(PawnStatsSO pawnStats, GridManager gridManager)
+    public virtual void Construct()
     {
-        _pawnStats = new PawnStats(pawnStats.MaxHealth, pawnStats.CurrentHealth, pawnStats.MaxActionPoints, pawnStats.ActionPointsLeft);
-        _gridManager = gridManager;
+        _pawnStats = new PawnStats(_HP, 0, _AP, 3, _STR, 0, _SPD, 0, _ARM, 0);
 
-        _actions = new Dictionary<Type, IPawnAction>();
-
-        Debug.Log($"Pawn created. MaxHP: {_pawnStats.MaxHealth}, MaxActions: {_pawnStats.MaxActionPoints}");
+        OnTurnBegin += HandleStartOfTurn;
+        OnTurnOver += HandleEndOfTurn;
     }
 
-    public void AddAction(IPawnAction newAction)
+    public void SetMoveAction(IPawnAction moveAction)
     {
-        _actions.Add(newAction.GetType(), newAction);
-      //  OnActionListChanged.Invoke();
+        _moveAction = moveAction;
     }
 
-    public void AddEffect(PawnStatsDecorator newEffect)
+    public void SetAttackAction(IPawnAction attackAction)
     {
-        newEffect.Construct(_pawnStats);
-        _pawnStats = newEffect;
+        _attackAction = attackAction;
+    }
+
+    public void AddBonusAction(IPawnAction action)
+    {
+        _bonusActions.Add(action.GetType(), action);
+    }
+
+    public bool TryGetBonusAction<T>(out T action) where T : IPawnAction
+    {
+        if (_bonusActions.TryGetValue(typeof(T), out var foundAction))
+        {
+            action = (T)foundAction;
+            return true;
+        }
+        action = default;
+        return false;
+    }
+
+    public void RemoveBonusAction<T>() where T : IPawnAction
+    {
+        _bonusActions.Remove(typeof(T));
+    }
+
+    public void ClearBonusActions()
+    {
+        _bonusActions.Clear();
     }
 
     public void HandleStartOfTurn()
     {
         _pawnStats.StartTurnUpdate();
     }
+
+    public void HandleEndOfTurn()
+    {
+    }
+
+    public void UpdatePosition(Vector2Int position)
+    {
+        GridPosition = position;
+    }
+}
+
+
+public enum PawnTeam
+{
+    Player,
+    Enemy
 }

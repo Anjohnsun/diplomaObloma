@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class GameplayUIService : MonoBehaviour, IGameplayUIService
+public class GameplayUI : MonoBehaviour, IGameplayUIService
 {
     [SerializeField] private RectTransform _playerStats;
     [SerializeField] private Vector2 _hidePosition1;

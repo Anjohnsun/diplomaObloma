@@ -4,62 +4,21 @@ using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
-    [SerializeField] private Transform _uiObj;
-
-    //заглушка, заменить
-    [SerializeField] private PawnStatsSO _pawnStats;
-
-    [Header("PlayerPawn")]
-    [SerializeField] private Pawn _playerPawn;
-    [SerializeField] private PlayerPawnHandler _pawnHandler;
-
-    [Header("Grid Manager Settings")]
-    [SerializeField] private GridSettingsSO _gridSettings;
-    [SerializeField] private int _lineDestroyFrequency;
-    [SerializeField] private int _linesUpToPlayer;
-    [SerializeField] private int _linesDownToPlayer;
-    [SerializeField] private int _width;
-    [SerializeField] private GameObject _tilePrefab;
-    [SerializeField] Vector2Int _playerStartPosition;
-    [SerializeField] private Transform _camera;
-
-    [Header("Mover service settings")]
-    [SerializeField] private MoverSettingsSO _pawnMoverSettings;
-    [SerializeField] private List<PawnStatsSO> _pawnStatsSOs;
+    [SerializeField] private LevelManager _levelManager;
+    [SerializeField] private PlayerPawnHandler _playerHandler;
 
     public override void InstallBindings()
     {
-
-        //Зарегистрировать StateManager, GridManager, EnemyManager, PlayerPawn, UIManager
-        Container.Bind<StateManager>().AsSingle();
-        Container.Bind<GridManager>().AsSingle();
-        Container.Bind<EnemyManager>().AsSingle();
-
-        //Бинды для grid manager
-        Container.Bind<GridSettingsSO>().FromInstance(_gridSettings);
-        Container.Bind<Pawn>().WithId("playerPawn").FromInstance(_playerPawn);
-        Container.Bind<Transform>().WithId("cameraTransform").FromInstance(_camera);
-        Container.Bind<PlayerPawnHandler>().FromInstance(_pawnHandler);
-
-        //Сервисы
-        Container.Bind<IGameplayUIService>().FromComponentInHierarchy().AsSingle();
-        IPawnMoverService mover = new PawnMoverService(_pawnMoverSettings);
-        Container.Bind<IPawnMoverService>().To<PawnMoverService>().AsSingle().WithArguments(_pawnMoverSettings);
-
-        //Зарегистрировать состояния (startAnimation, PlayerTurn, EnemyTurn, PlayerDeath)
+        GridManager gridManager = new GridManager();
+        //states
         Container.Bind<StartAnimationState>().AsSingle();
-        Container.Bind<PlayerTurnState>().AsSingle();
-        Container.Bind<EnemyTurnState>().AsSingle();
+        Container.Bind<BattleState>().AsSingle();
+        Container.Bind<UpgradeState>().AsSingle();
+        Container.Bind<StateManager>().AsSingle();
 
-        MonoBehaviour coroutines = new GameObject("Coroutines").AddComponent<Coroutines>();
-        Container.Bind<MonoBehaviour>().FromInstance(coroutines).AsTransient();
+        Container.Bind<LevelManager>().FromInstance(_levelManager).AsSingle();
+        Container.Bind<PlayerPawnHandler>().FromInstance(_playerHandler).AsSingle();
+        Container.Bind<IGameplayUIService>().To<GameplayUI>().FromComponentInHierarchy().AsSingle();
 
-
-        //REWRITE THIS FOR SMTH адекватное
-        Container.Bind<PawnStatsSO>().FromInstance(_pawnStats);
-        Container.Bind<BasePlayerMove>().AsSingle();
-
-        //Фабрики
-        Container.Bind<List<PawnStatsSO>>().FromInstance(_pawnStatsSOs);
     }
 }

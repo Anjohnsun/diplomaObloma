@@ -1,118 +1,120 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
 
 public class PlayerPawnHandler : MonoBehaviour
 {
-    private Pawn _pawn;
-    [SerializeField] private PawnStatsSO _pawnStats;
+    [SerializeField] private Pawn _pawn;
     private PlayerInput _input;
-    private StateManager _stateManager;
-    private EnemyTurnState _enemyTurnState;
+    private bool _inputEnabled;
 
-    private Vector2Int _clickPoint;
-    private Vector2Int _hoverPoint;
-
-    public Vector2Int ClickPoint => _clickPoint;
-    public Vector2Int HoverPoint => _hoverPoint;
-
-    private GridManager _gridManager;
-
-    private IPawnAction _chosenAction;
-
+    private Type _chosenAction;
+    List<FieldTile> _tiles;
 
     [Inject]
-    private void Construct([Inject(Id = "playerPawn")] Pawn pawn,/* [Inject(Id = "fromSave")]bool fromSave,*/ GridManager gridManager,
-        StateManager stateManager, EnemyTurnState enemyTurnState)
+    private void Construct()
     {
+        _pawn.Construct();
+        _pawn._moveAction = new MoveAction(_pawn, new BasePlayerMove());
+        //_pawn._attackAction = new AttackAction();
+
+        _pawn.OnTurnBegin += EnableInput;
+        _pawn.OnTurnOver += DisableInput;
+
         _input = new PlayerInput();
-        _pawn = pawn;
-        _gridManager = gridManager;
-        _stateManager = stateManager;
-        _enemyTurnState = enemyTurnState;
-
-        //подписки инпута
         _input.GameplayInput.DoAction.performed += context => DoAction();
-
-
-        //наполнение playerPawn декораторами и действиями
-        /*        if (fromSave)
-                {
-                    //логика загрузка сохранённых данных
-                    // load from SaveService()...
-                } else
-                {*/
-        _pawn.Construct(_pawnStats, _gridManager);
-        _pawn.AddAction(new MoveAction(_pawn, new PlusMove(_gridManager), _gridManager));
-        //add basic attack
-        //maybe add start effects?
-        //}
     }
 
-    public void EnableInput(bool value)
+    public void EnableInput()
     {
-        if (value)
+        Debug.Log("enabled");
+
+        _inputEnabled = true;
+        _input.Enable();
+        ChooseDefaultActions();
+    }
+
+    private void handleNewPawnAction()
+    {
+
+    }
+
+    public void DisableInput()
+    {
+        _inputEnabled = false;
+        _input.Disable();
+    }
+
+    private void ChooseDefaultActions()
+    {
+        GridManager.Instance.DemarkTiles();
+        Debug.Log("Choose default");
+        
+        _tiles = _pawn._moveAction.CalculateTargets();
+        GridManager.Instance.MarkTiles(_tiles, MarkerType.interact);
+
+        //_tiles = _pawn._attackAction.CalculateTargets();
+        // GridManager.Instance.MarkTiles(_tiles, MarkerType.attack);
+    }
+
+    private void ChooseAction<T>() where T : IPawnAction
+    {
+        GridManager.Instance.DemarkTiles();
+        if (_inputEnabled)
         {
-            _input.Enable();
-
-            //отражение действия по умолчанию
-            ChooseAction<MoveAction>();
+            if (_chosenAction != typeof(T))
+            {
+                _chosenAction = typeof(T);
+                _tiles = _pawn.BonusActions[typeof(MoveAction)].CalculateTargets();
+                GridManager.Instance.MarkTiles(_tiles, MarkerType.interact);
+            }
+            else
+            {
+                _chosenAction = null;
+                ChooseDefaultActions();
+            }
+            /*GridManager.Instance.DemarkTiles();
+            List<FieldTile> _tiles = _pawn.Actions[typeof(MoveAction)].CalculateTargets();
+            GridManager.Instance.MarkTiles(_tiles, MarkerType.interact);*/
         }
-        else
-        {
-            _input.Disable();
-        }
-    }
-
-    public void ChooseAction<T>() where T : IPawnAction
-    {
-        _pawn.Actions.TryGetValue(typeof(T), out _chosenAction);
-        var targets = _chosenAction.CalculateTargets();
-        _gridManager.HighlightTileGroup(targets);
-    }
-
-
-    private void ChooseAction()
-    {
-        var targets = _chosenAction.CalculateTargets();
-        _gridManager.HighlightTileGroup(targets);
     }
 
     private void DoAction()
     {
-        _clickPoint = Vector2Int.RoundToInt(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()));
+        DisableInput();
+        GridManager.Instance.DemarkTiles();
 
-        _chosenAction.Perform(_clickPoint);
-        _gridManager.DehighlightAllTiles();
-
-        StartCoroutine(HandleEndOfAction(_chosenAction.duration));
-    }
-
-    private IEnumerator HandleEndOfAction(float delay)
-    {
-        _input.Disable();
-        yield return new WaitForSeconds(delay);
-
-        if (_pawn.PawnStats.ActionPointsLeft <= 0)
+        if (_chosenAction != null)
         {
-            Debug.Log("END OF TURN");
-            _stateManager.ChangeState(_enemyTurnState);
+            _pawn.BonusActions[_chosenAction].Perform(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()), () => HandleActionEnding());
         }
         else
         {
-            ChooseAction();
+            _pawn.BonusActions[typeof(MoveAction)].Perform(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()), () => HandleActionEnding());
+            //_pawn.Actions[typeof(AttackAction)].Perform(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()), () => HandleActionEnding());
         }
-        _input.Enable();
+
     }
+
+    private void HandleActionEnding()
+    {
+        _chosenAction = null;
+        if (_pawn.PawnStats.CurrentAP <= 0)
+        {
+            _pawn.OnTurnOver.Invoke();
+        } else
+        {
+            EnableInput();
+        }
+    }
+
 
     private void SkipTurn()
     {
-        while (_pawn.PawnStats.ActionPointsLeft > 0)
-        {
-            _pawn.PawnStats.UseAction();
-        }
-        StartCoroutine(HandleEndOfAction(0));
+
     }
 }
