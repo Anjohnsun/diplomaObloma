@@ -15,15 +15,17 @@ public class PlayerPawnHandler : MonoBehaviour
     private Type _chosenAction;
     List<FieldTile> _tiles;
 
+    [SerializeField] private TextMeshProUGUI _playerStatsUI;
+
     [Inject]
     private void Construct()
     {
-        _pawn.Construct();
-        _pawn._moveAction = new MoveAction(_pawn, new BasePlayerMove());
-        //_pawn._attackAction = new AttackAction();
+        _pawn.Construct(0, 3, 0, 0);
+        _pawn.MoveAction = new MoveAction(_pawn, new BasePlayerMove());
+        _pawn.AttackAction = new AttackAction(_pawn, new LittleSword(_pawn));
 
-        _pawn.OnTurnBegin += EnableInput;
-        _pawn.OnTurnOver += DisableInput;
+        _pawn.PawnStats.OnStatsChanged += UpdateUI;
+        UpdateUI(_pawn.PawnStats.CurrentHP, _pawn.PawnStats.CurrentAP, _pawn.PawnStats.STR, _pawn.PawnStats.ARM);
 
         _input = new PlayerInput();
         _input.GameplayInput.DoAction.performed += context => DoAction();
@@ -32,6 +34,11 @@ public class PlayerPawnHandler : MonoBehaviour
     public void EnableInput()
     {
         Debug.Log("enabled");
+
+        if (_pawn.PawnStats.CurrentAP <= 0)
+        {
+            _pawn.PawnStats.StartNewTurn();
+        }
 
         _inputEnabled = true;
         _input.Enable();
@@ -52,13 +59,17 @@ public class PlayerPawnHandler : MonoBehaviour
     private void ChooseDefaultActions()
     {
         GridManager.Instance.DemarkTiles();
-        Debug.Log("Choose default");
-        
-        _tiles = _pawn._moveAction.CalculateTargets();
+
+        _tiles = _pawn.MoveAction.CalculateTargets();
         GridManager.Instance.MarkTiles(_tiles, MarkerType.interact);
 
-        //_tiles = _pawn._attackAction.CalculateTargets();
-        // GridManager.Instance.MarkTiles(_tiles, MarkerType.attack);
+        _tiles = _pawn.AttackAction.CalculateTargets();
+        GridManager.Instance.MarkTiles(_tiles, MarkerType.attack);
+    }
+
+    private void UpdateUI(int hp, int ap, int str, int arm)
+    {
+        _playerStatsUI.text = $"HP - {hp}\n AP - {ap}\n STR - {str}\n ARM - {arm}";
     }
 
     private void ChooseAction<T>() where T : IPawnAction
@@ -94,10 +105,15 @@ public class PlayerPawnHandler : MonoBehaviour
         }
         else
         {
-            _pawn.BonusActions[typeof(MoveAction)].Perform(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()), () => HandleActionEnding());
-            //_pawn.Actions[typeof(AttackAction)].Perform(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()), () => HandleActionEnding());
+            if (_pawn.MoveAction.CanPerform(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue())))
+                _pawn.MoveAction.Perform(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()), () => HandleActionEnding());
+            else if (_pawn.AttackAction.CanPerform(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue())))
+                _pawn.AttackAction.Perform(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()), () => HandleActionEnding());
+            else
+            {
+                HandleActionEnding();
+            }
         }
-
     }
 
     private void HandleActionEnding()
@@ -105,9 +121,19 @@ public class PlayerPawnHandler : MonoBehaviour
         _chosenAction = null;
         if (_pawn.PawnStats.CurrentAP <= 0)
         {
-            _pawn.OnTurnOver.Invoke();
-        } else
+            if (_pawn.GridPosition.y == GridManager.Instance.VerticalSize - 1)
+            {
+                LevelManager.Instance.StartLevelTransition();
+            }
+            GridManager.Instance.DemarkTiles();
+            StateManager.Instance.ChangeState<EnemyTurnState>();
+        }
+        else
         {
+            if (_pawn.GridPosition.y == GridManager.Instance.VerticalSize - 1)
+            {
+                LevelManager.Instance.StartLevelTransition();
+            }
             EnableInput();
         }
     }
@@ -115,6 +141,6 @@ public class PlayerPawnHandler : MonoBehaviour
 
     private void SkipTurn()
     {
-
+        StateManager.Instance.ChangeState<EnemyTurnState>();
     }
 }

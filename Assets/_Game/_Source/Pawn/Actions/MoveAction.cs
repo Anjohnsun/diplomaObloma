@@ -35,7 +35,7 @@ public class MoveAction : IPawnAction
         if (targetTile != null && _possibleMoves.Contains(targetTile))
         {
             GridManager.Instance.MovePawn(Pawn, targetTile);
-            Pawn.PawnStats.UseAction();
+            Pawn.PawnStats.UseAP();
 
             Pawn.transform.DOMove(targetTile.transform.position, Duration)
                 .OnComplete(() =>
@@ -61,5 +61,11 @@ public class MoveAction : IPawnAction
     public void SelfRealize()
     {
         throw new NotImplementedException();
+    }
+
+    public bool CanPerform(Vector2 targetWorldPosition)
+    {
+        FieldTile targetTile = GridManager.Instance.WorldPositionToTile(targetWorldPosition);
+        return targetTile != null && _possibleMoves.Contains(targetTile);
     }
 }

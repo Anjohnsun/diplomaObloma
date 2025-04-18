@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: ARM
   m_EditorClassIdentifier: 
   _levels:
-  - _XPCost: 0
+  - _xpCost: 0
     _value: 0
-  - _XPCost: 0
+  - _xpCost: 1
     _value: 0
-  - _XPCost: 0
+  - _xpCost: 2
     _value: 0
-  - _XPCost: 0
+  - _xpCost: 2
     _value: 0

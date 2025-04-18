@@ -13,5 +13,5 @@ public abstract class AWeapon
     }
 
     public abstract List<Vector2Int> GetAttackArea(Vector2Int position);
-    public virtual int CalculateDamage() => Mathf.RoundToInt(BaseDamage * _owner.PawnStats.STR_VALUE);
+    public virtual int CalculateDamage() => Mathf.RoundToInt(BaseDamage * _owner.PawnStats.STR);
 }

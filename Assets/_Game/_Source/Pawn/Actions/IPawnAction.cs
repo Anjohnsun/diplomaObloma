@@ -10,5 +10,6 @@ public interface IPawnAction
     void Perform(Vector2 point, Action handler);
     void Cancel();
     void SelfRealize();
+    bool CanPerform(Vector2 point);
 
 }

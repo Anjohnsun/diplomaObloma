@@ -1,79 +1,158 @@
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 public class PawnStats : IPawnStats
 {
-    private int _currentHP;
-    private int _currentARM;
-    private int _currentAP;
+    private readonly StatConfigSO _hpConfig;
+    private readonly StatConfigSO _apConfig;
+    private readonly StatConfigSO _strConfig;
+    private readonly StatConfigSO _armConfig;
 
-    public int CurrentHP => _currentHP;
-    public int CurrentARM => _currentARM;
-    public int CurrentAP => _currentAP;
+    public int EXP { get; private set; }
 
-    public StatLevel HP { get; private set; }
-    public StatLevel AP { get; private set; }
-    public StatLevel STR { get; private set; }
-    public StatLevel SPD { get; private set; }
-    public StatLevel ARM { get; private set; }
+    public int HPLevel { get; private set; }
+    public int APLevel { get; private set; }
+    public int STRLevel { get; private set; }
+    public int ARMLevel { get; private set; }
 
-    public int HP_VALUE => HP.StatConfig.Levels[HP.Level].Value;
-    public int AP_VALUE => AP.StatConfig.Levels[AP.Level].Value;
-    public int STR_VALUE => STR.StatConfig.Levels[STR.Level].Value;
-    public int SPD_VALUE => SPD.StatConfig.Levels[SPD.Level].Value;
-    public int ARM_VALUE => ARM.StatConfig.Levels[ARM.Level].Value;
+    public int CurrentHP { get; set; }
+    public int CurrentAP { get; set; }
 
-    public Action<int> OnGetDamage { get; set; }
+    public int MaxHP => _hpConfig.Levels[HPLevel].Value;
+    public int MaxAP => _apConfig.Levels[APLevel].Value;
+    public int STR => _strConfig.Levels[STRLevel].Value;
+    public int ARM => _armConfig.Levels[ARMLevel].Value;
 
-    public PawnStats(StatConfigSO HP, int hpLevel, StatConfigSO AP, int apLevel, StatConfigSO STR, int strLevel,
-        StatConfigSO SPD, int spdLevel, StatConfigSO ARM, int armLevel)
+
+    public event Action<int> OnDamageTaken;
+    public event Action OnDeath;
+    public event Action<int, int, int, int> OnStatsChanged;
+
+    public PawnStats(
+        StatConfigSO hpConfig, int hpLevel,
+        StatConfigSO apConfig, int apLevel,
+        StatConfigSO strConfig, int strLevel,
+        StatConfigSO armConfig, int armLevel)
     {
-        this.HP = new StatLevel(HP, hpLevel);
-        this.AP = new StatLevel(AP, apLevel);
-        this.STR = new StatLevel(STR, strLevel);
-        this.SPD = new StatLevel(SPD, spdLevel);
-        this.ARM = new StatLevel(ARM, armLevel);
+        _hpConfig = hpConfig;
+        _apConfig = apConfig;
+        _strConfig = strConfig;
+        _armConfig = armConfig;
 
-        _currentHP = HP.Levels[hpLevel].Value;
-        _currentARM = ARM.Levels[armLevel].Value;
-        _currentAP = AP.Levels[apLevel].Value;
+        HPLevel = hpLevel;
+        APLevel = apLevel;
+        STRLevel = strLevel;
+        ARMLevel = armLevel;
+
+        ResetStats();
+        OnStatsChanged += (int a, int f, int s, int r) => Mathf.Abs(0.4f);
+        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
     }
 
-
-    public void UseAction()
+    private void ResetStats()
     {
-        if (_currentAP <= 0)
-            throw new Exception("AP == ZERO");
-        _currentAP--;
-    }
-
-    public void IncreaseHealth(int amount)
-    {
-
+        CurrentHP = MaxHP;
+        CurrentAP = MaxAP;
     }
 
     public void TakeDamage(int damage)
     {
-        if (damage > _currentARM)
+        int remainingDamage = damage - ARM;
+
+        if (remainingDamage > 0)
         {
-            _currentHP -= damage - _currentARM;
-            _currentARM = 0;
+            CurrentHP = Mathf.Max(CurrentHP - remainingDamage, 0);
+            OnDamageTaken?.Invoke(CurrentHP);
 
-            if (_currentHP <= 0)
+            if (CurrentHP <= 0)
             {
-
+                OnDeath?.Invoke();
             }
         }
+
+        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
     }
 
-    public void StartTurnUpdate()
+    public void Heal(int amount)
     {
-        _currentAP = AP_VALUE;
-
-        if (_currentARM < ARM_VALUE)
-        {
-            _currentARM++;
-        }
+        CurrentHP = Mathf.Min(CurrentHP + amount, MaxHP);
     }
+
+    public void UseAP(int amount = 1)
+    {
+        CurrentAP = Mathf.Max(CurrentAP - amount, 0);
+        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
+    }
+
+    public void StartNewTurn()
+    {
+        CurrentAP = MaxAP;
+        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
+    }
+
+    public bool LevelUpStat(StatType statType)
+    {
+        StatConfigSO config = null;
+        int currentLevel = 0;
+        int xpCost = 0;
+
+        switch (statType)
+        {
+            case StatType.HP:
+                config = _hpConfig;
+                currentLevel = HPLevel;
+                break;
+            case StatType.AP:
+                config = _apConfig;
+                currentLevel = APLevel;
+                break;
+            case StatType.STR:
+                config = _strConfig;
+                currentLevel = STRLevel;
+                break;
+            case StatType.ARM:
+                config = _armConfig;
+                currentLevel = ARMLevel;
+                break;
+        }
+
+        if (currentLevel >= config.Levels.Count - 1)
+            return false;
+
+        xpCost = config.Levels[currentLevel + 1].XPCost;
+
+        if (EXP < xpCost)
+            return false;
+
+        EXP -= xpCost;
+
+        switch (statType)
+        {
+            case StatType.HP:
+                HPLevel++;
+                CurrentHP = MaxHP;
+                break;
+            case StatType.AP:
+                APLevel++;
+                CurrentAP = MaxAP;
+                break;
+            case StatType.STR:
+                STRLevel++;
+                break;
+            case StatType.ARM:
+                ARMLevel++;
+                break;
+        }
+
+        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
+        return true;
+    }
+
+    public void AddEXP(int value)
+    {
+        EXP += value;
+    }
+
 }

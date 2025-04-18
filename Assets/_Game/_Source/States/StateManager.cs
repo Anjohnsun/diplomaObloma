@@ -9,18 +9,23 @@ public class StateManager
     private readonly Dictionary<Type, IGameState> _states;
     private IGameState _currentState;
 
+    public static StateManager Instance { get; private set; }
+
     public StateManager(
         StartAnimationState startAnimationState,
-        BattleState battleState,
-        UpgradeState upgradeState)
+        PlayerTurnState playerTurnState,
+        EnemyTurnState enemyTurnState,
+        LevelTransitionState levelTransitionState)
     {
         _states = new Dictionary<Type, IGameState>
         {
             { typeof(StartAnimationState), startAnimationState },
-            { typeof(BattleState), battleState },
-            { typeof(UpgradeState), upgradeState}
+            { typeof(PlayerTurnState), playerTurnState},
+            { typeof(EnemyTurnState), enemyTurnState},
+            { typeof(LevelTransitionState), levelTransitionState}
         };
 
+        Instance = this;
     }
 
     public void ChangeState<T>() where T : IGameState

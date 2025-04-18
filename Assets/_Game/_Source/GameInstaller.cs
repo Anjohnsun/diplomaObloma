@@ -12,13 +12,17 @@ public class GameInstaller : MonoInstaller
         GridManager gridManager = new GridManager();
         //states
         Container.Bind<StartAnimationState>().AsSingle();
-        Container.Bind<BattleState>().AsSingle();
-        Container.Bind<UpgradeState>().AsSingle();
-        Container.Bind<StateManager>().AsSingle();
+        Container.Bind<PlayerTurnState>().AsSingle();
+        Container.Bind<EnemyTurnState>().AsSingle();
+        Container.Bind<LevelTransitionState>().AsSingle();
+        Container.Bind<StateManager>().AsSingle().NonLazy();
+
+        MonoBehaviour coroutines = new GameObject("Coroutines").AddComponent<Coroutines>();
+        Container.Bind<MonoBehaviour>().FromInstance(coroutines).AsTransient();
 
         Container.Bind<LevelManager>().FromInstance(_levelManager).AsSingle();
         Container.Bind<PlayerPawnHandler>().FromInstance(_playerHandler).AsSingle();
         Container.Bind<IGameplayUIService>().To<GameplayUI>().FromComponentInHierarchy().AsSingle();
-
+        Container.Bind<EnemyManager>().AsSingle();
     }
 }

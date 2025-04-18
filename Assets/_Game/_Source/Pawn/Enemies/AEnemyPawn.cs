@@ -7,11 +7,12 @@ public abstract class AEnemyPawn : Pawn
 
     public Action _OnPawnDie;
 
-    public override void Construct()
+    public override void Construct(int hpLvl, int apLvl, int strLvl, int armLvl)
     {
-        base.Construct();
-        OnTurnBegin += ChooseAndPerformAction;
-        _pawnStats.OnGetDamage += HandleDamage;
+        base.Construct(hpLvl, apLvl, strLvl, armLvl);
+        _pawnStats.OnDamageTaken += HandleDamage;
+        _pawnStats.OnDeath += HandleDeath;
+        PawnTeam = PawnTeam.Enemy;
     }
 
     protected virtual void ChooseAndPerformAction()
@@ -19,8 +20,14 @@ public abstract class AEnemyPawn : Pawn
 
     }
 
-    protected virtual void HandleDamage(int hp)
+    protected virtual void HandleDamage(int hpLeft)
     {
-        Debug.Log("Pawn: damage handled");
+        Debug.Log($"Pawn: damage handled, hp left {hpLeft}");
+    }
+
+    protected virtual void HandleDeath()
+    {
+        Debug.Log("Pawn died");
+        Destroy(gameObject);
     }
 }

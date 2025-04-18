@@ -4,17 +4,14 @@ using Zenject;
 
 public class EntryPoint : MonoBehaviour
 {
-    private StateManager _stateManager;
-
     [Inject]
-    private void Construct(StateManager stateManager)
+    private void Construct()
     {
-        _stateManager = stateManager;
     }
 
     IEnumerator Start()
     {
-        _stateManager.ChangeState<StartAnimationState>();
+        StateManager.Instance.ChangeState<StartAnimationState>();
         yield return null;
     }
 }

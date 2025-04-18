@@ -57,15 +57,14 @@ public class FieldTile : MonoBehaviour
                 }
         }
 
-
     }
 
     public void Demark()
     {
         DOTween.Kill(transform);
 
-        _interactMarker.DOColor(new Color(_interactMarker.color.r, _interactMarker.color.g, _interactMarker.color.b, 0),
-                 _animDuration);
+        _interactMarker.DOColor(new Color(_interactMarker.color.r, _interactMarker.color.g, _interactMarker.color.b, 0), _animDuration);
+        _attackMarker.DOColor(new Color(_attackMarker.color.r, _attackMarker.color.g, _attackMarker.color.b, 0), _animDuration);
     }
 }
 

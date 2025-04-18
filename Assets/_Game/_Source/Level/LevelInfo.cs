@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using System.Collections;
-using UnityEditor.U2D.Aseprite;
 using System.Collections.Generic;
 
 public class LevelInfo : MonoBehaviour
@@ -15,11 +14,15 @@ public class LevelInfo : MonoBehaviour
 
     public Vector2Int PlayerPosition => _playerPosition;
 
-    private TurnManager _turnManager;
     private List<Pawn> _pawns;
+    private EnemySpawner _enemySpawner;
+    private int _levelIndex;
 
-    public void GenerateLevel(int number)
+    public void GenerateLevel(int number, EnemySpawner spawner)
     {
+        _enemySpawner = spawner;
+        _levelIndex = number;
+
         if (_size.x < 7 || _size.x % 2 == 0)
             throw new Exception("Incorrect level size");
 
@@ -52,6 +55,8 @@ public class LevelInfo : MonoBehaviour
                 _tiles[column, matrixRow].Construct();
             }
         }
+
+        _pawns = new List<Pawn>();
         yield return null;
     }
 
@@ -72,22 +77,21 @@ public class LevelInfo : MonoBehaviour
             }
         }
         yield return null;
-    }
-
-    public void StartLevelPassing(Pawn playerPawn, TurnManager turnManager)
-    {
 
         _pawns = new List<Pawn>();
-        playerPawn.UpdatePosition(_playerPosition);
-        _pawns.Add(playerPawn);
-        //create enemies
 
-        turnManager.Initialize(_pawns);
+        _enemySpawner.SpawnEnemies(_tiles, _levelIndex);
+
     }
 
 
-    public void InitLevel()
+    public void InitLevel(EnemyManager enemyManager, Pawn playerPawn)
     {
         GridManager.Instance.InitializeGrid(_tiles, transform);
+
+        enemyManager.InitPawns(_pawns);
+
+        _pawns = new List<Pawn>();
+        GridManager.Instance.MovePawn(playerPawn, _tiles[_playerPosition.x, _playerPosition.y]);
     }
 }

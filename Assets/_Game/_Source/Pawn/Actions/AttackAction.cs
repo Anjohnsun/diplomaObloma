@@ -40,6 +40,7 @@ public class AttackAction : IPawnAction
 
         if (targetTile != null && _possibleTargets.Contains(targetTile))
         {
+            Debug.Log("ATTACK");
             int damage = _weapon.CalculateDamage();
             targetTile.Pawn.PawnStats.TakeDamage(damage);
 
@@ -54,4 +55,10 @@ public class AttackAction : IPawnAction
 
     public void Cancel() { /*...*/ }
     public void SelfRealize() { /*...*/ }
+
+    public bool CanPerform(Vector2 targetWorldPosition)
+    {
+        FieldTile targetTile = GridManager.Instance.WorldPositionToTile(targetWorldPosition);
+        return targetTile != null && _possibleTargets.Contains(targetTile);
+    }
 }

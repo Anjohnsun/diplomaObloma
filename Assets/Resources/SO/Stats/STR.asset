@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: STR
   m_EditorClassIdentifier: 
   _levels:
-  - _XPCost: 0
-    _value: 0
-  - _XPCost: 0
-    _value: 0
-  - _XPCost: 0
-    _value: 0
-  - _XPCost: 0
-    _value: 0
+  - _xpCost: 0
+    _value: 1
+  - _xpCost: 0
+    _value: 2
+  - _xpCost: 0
+    _value: 3
+  - _xpCost: 0
+    _value: 4

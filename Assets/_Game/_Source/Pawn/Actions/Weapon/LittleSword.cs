@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class LittleSword : AWeapon
 {
-    public LittleSword(Pawn owner) : base(owner, 5) { }
+    public LittleSword(Pawn owner) : base(owner, 1) { }
 
     public override List<Vector2Int> GetAttackArea(Vector2Int position)
     {

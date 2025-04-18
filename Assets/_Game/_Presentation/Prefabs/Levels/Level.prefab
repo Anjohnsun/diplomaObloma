@@ -47,3 +47,4 @@ MonoBehaviour:
   _tilePrefab: {fileID: 8131002493246311568, guid: 4fd96ffe61520af4faaf11e26911cf74, type: 3}
   _size: {x: 7, y: 7}
   _playerPosition: {x: 3, y: 0}
+  _enemyPrefab: {fileID: 1937321385416631012, guid: eec87be6bc2cefc409375065713c53e9, type: 3}

@@ -9,6 +9,7 @@ public class GridManager
     private int _verticalSize;
     private Transform _levelTransform;
     public static GridManager Instance { get; private set; }
+    public int VerticalSize => _verticalSize;
 
     public static Predicate<FieldTile> IsFreeTile = tile => tile.Pawn == null;
     public static Predicate<FieldTile> HasAnyPawn = tile => tile.Pawn != null;
@@ -35,7 +36,7 @@ public class GridManager
     {
         Vector2 localPos = _levelTransform.InverseTransformPoint(worldPosition);
         return new Vector2Int(
-            Mathf.RoundToInt(localPos.x + _grid.GetLength(0)/2),
+            Mathf.RoundToInt(localPos.x + _grid.GetLength(0) / 2),
             Mathf.RoundToInt(localPos.y)
         );
     }
@@ -48,7 +49,7 @@ public class GridManager
     public List<FieldTile> GetAvailableTargets(List<Vector2Int> targetPositions, Predicate<FieldTile> condition)
     {
         List<FieldTile> availableTargets = new List<FieldTile>();
-        
+
         foreach (var pos in targetPositions)
         {
             if (IsPositionValid(pos) && condition.Invoke(_grid[pos.x, pos.y]))
@@ -61,7 +62,7 @@ public class GridManager
 
     private bool IsPositionValid(Vector2Int position)
     {
-        return position.x >= 0 && position.x < _horizontalSize && 
+        return position.x >= 0 && position.x < _horizontalSize &&
                position.y >= 0 && position.y < _verticalSize;
     }
 
@@ -72,7 +73,7 @@ public class GridManager
 
         _grid[pawn.GridPosition.x, pawn.GridPosition.y].RemovePawn();
         tile.SetNewPawn(pawn);
-        pawn.UpdatePosition(newPos);
+        pawn.GridPosition = newPos;
     }
 
     public Vector2Int GetTileCoordinates(FieldTile tile)
