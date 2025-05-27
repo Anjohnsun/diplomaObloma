@@ -38,7 +38,6 @@ public class LevelInfo : MonoBehaviour
                 break;
         }
     }
-
     private IEnumerator GenerateFirstLevelCor()
     {
         for (int visualRow = 0; visualRow < _size.y; visualRow++)
@@ -59,7 +58,6 @@ public class LevelInfo : MonoBehaviour
         _pawns = new List<Pawn>();
         yield return null;
     }
-
     private IEnumerator GenerateLevelCor()
     {
         for (int visualRow = 0; visualRow < _size.y; visualRow++)
@@ -78,13 +76,9 @@ public class LevelInfo : MonoBehaviour
         }
         yield return null;
 
-        _pawns = new List<Pawn>();
-
-        _enemySpawner.SpawnEnemies(_tiles, _levelIndex);
+        _pawns = _enemySpawner.SpawnEnemies(_tiles, _levelIndex);
 
     }
-
-
     public void InitLevel(EnemyManager enemyManager, Pawn playerPawn)
     {
         GridManager.Instance.InitializeGrid(_tiles, transform);
@@ -93,5 +87,13 @@ public class LevelInfo : MonoBehaviour
 
         _pawns = new List<Pawn>();
         GridManager.Instance.MovePawn(playerPawn, _tiles[_playerPosition.x, _playerPosition.y]);
+    }
+    public void DestroyLevel()
+    {
+        StartCoroutine(DestroyLevelCor());
+    }
+    private IEnumerator DestroyLevelCor()
+    {
+        return null;
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
 
-public class Pawn : MonoBehaviour
+public class Pawn : MonoBehaviour, IHintUser
 {
     [SerializeField] protected StatConfigSO _HP;
     [SerializeField] protected StatConfigSO _AP;
@@ -30,12 +30,10 @@ public class Pawn : MonoBehaviour
         _bonusActions = new Dictionary<Type, IPawnAction>();
         PawnTeam = PawnTeam.Player;
     }
-
     public void AddBonusAction(IPawnAction action)
     {
         _bonusActions.Add(action.GetType(), action);
     }
-
     public bool TryGetBonusAction<T>(out T action) where T : IPawnAction
     {
         if (_bonusActions.TryGetValue(typeof(T), out var foundAction))
@@ -46,9 +44,11 @@ public class Pawn : MonoBehaviour
         action = default;
         return false;
     }
+    public virtual string GetHintText()
+    {
+        return $"Будущее этой пешки ещё не определено";
+    }
 }
-
-
 public enum PawnTeam
 {
     Player,

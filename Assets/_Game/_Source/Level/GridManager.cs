@@ -26,13 +26,11 @@ public class GridManager
         _verticalSize = grid.GetLength(1);
         _levelTransform = levelTransform;
     }
-
     public FieldTile WorldPositionToTile(Vector2 worldPosition)
     {
         return GetTileAtGridPosition(WorldToGridPosition(worldPosition));
     }
-
-    private Vector2Int WorldToGridPosition(Vector2 worldPosition)
+    public Vector2Int WorldToGridPosition(Vector2 worldPosition)
     {
         Vector2 localPos = _levelTransform.InverseTransformPoint(worldPosition);
         return new Vector2Int(
@@ -40,12 +38,10 @@ public class GridManager
             Mathf.RoundToInt(localPos.y)
         );
     }
-
     public FieldTile GetTileAtGridPosition(Vector2Int gridPosition)
     {
         return IsPositionValid(gridPosition) ? _grid[gridPosition.x, gridPosition.y] : null;
     }
-
     public List<FieldTile> GetAvailableTargets(List<Vector2Int> targetPositions, Predicate<FieldTile> condition)
     {
         List<FieldTile> availableTargets = new List<FieldTile>();
@@ -60,12 +56,25 @@ public class GridManager
         return availableTargets;
     }
 
+    public List<FieldTile> GetAvailableTargets(Predicate<FieldTile> condition)
+    {
+        List<FieldTile> availableTargets = new List<FieldTile>();
+
+        foreach (var tile in _grid)
+        {
+            if (condition.Invoke(tile))
+            {
+                availableTargets.Add(tile);
+            }
+        }
+        return availableTargets;
+    }
+
     private bool IsPositionValid(Vector2Int position)
     {
         return position.x >= 0 && position.x < _horizontalSize &&
                position.y >= 0 && position.y < _verticalSize;
     }
-
     public void MovePawn(Pawn pawn, FieldTile tile)
     {
         Vector2Int newPos = GetTileCoordinates(tile);
@@ -75,7 +84,6 @@ public class GridManager
         tile.SetNewPawn(pawn);
         pawn.GridPosition = newPos;
     }
-
     public Vector2Int GetTileCoordinates(FieldTile tile)
     {
         if (tile == null) return new Vector2Int(-1, -1);
@@ -92,7 +100,6 @@ public class GridManager
         }
         return new Vector2Int(-1, -1);
     }
-
     public void MarkTiles(List<FieldTile> tiles, MarkerType markerType)
     {
         foreach (var tile in tiles)
@@ -100,7 +107,6 @@ public class GridManager
             if (tile != null) tile.Mark(markerType);
         }
     }
-
     public void DemarkTiles()
     {
         foreach (var tile in _grid)

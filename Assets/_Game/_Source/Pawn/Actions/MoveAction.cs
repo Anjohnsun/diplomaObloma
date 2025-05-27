@@ -44,8 +44,6 @@ public class MoveAction : IPawnAction
                     handler();
                     return;
                 });
-
-            //HANDLE LAYER_ORDER UPDATE
         }
         else
         {
@@ -58,7 +56,7 @@ public class MoveAction : IPawnAction
         throw new NotImplementedException();
     }
 
-    public void SelfRealize()
+    public void SelfRealize(Action handler)
     {
         throw new NotImplementedException();
     }
@@ -67,5 +65,14 @@ public class MoveAction : IPawnAction
     {
         FieldTile targetTile = GridManager.Instance.WorldPositionToTile(targetWorldPosition);
         return targetTile != null && _possibleMoves.Contains(targetTile);
+    }
+
+    public bool CanPerformAuto()
+    {
+         if (CalculateTargets().Count > 0)
+        {
+            return true;
+        }
+        return false;
     }
 }

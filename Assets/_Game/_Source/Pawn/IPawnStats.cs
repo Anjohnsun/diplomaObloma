@@ -13,6 +13,11 @@ public interface IPawnStats
     int STR { get; }
     int ARM { get; }
 
+    StatConfigSO HPConfig { get; }
+    StatConfigSO APConfig { get; }
+    StatConfigSO STRConfig { get; }
+    StatConfigSO ARMConfig { get; }
+
     int HPLevel { get; }
     int APLevel { get; }
     int STRLevel { get; }
@@ -25,6 +30,7 @@ public interface IPawnStats
     void TakeDamage(int damage);
     void Heal(int amount);
     void UseAP(int amount = 1);
+    void ResetAP();
     void AddEXP (int value);
     void StartNewTurn();
     bool LevelUpStat(StatType statType);

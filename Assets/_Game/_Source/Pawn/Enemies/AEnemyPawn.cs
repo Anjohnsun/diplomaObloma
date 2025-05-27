@@ -15,9 +15,9 @@ public abstract class AEnemyPawn : Pawn
         PawnTeam = PawnTeam.Enemy;
     }
 
-    protected virtual void ChooseAndPerformAction()
+    public virtual void PerformActions()
     {
-
+        _pawnStats.StartNewTurn();
     }
 
     protected virtual void HandleDamage(int hpLeft)

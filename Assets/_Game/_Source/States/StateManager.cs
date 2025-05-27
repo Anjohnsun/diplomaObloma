@@ -15,14 +15,16 @@ public class StateManager
         StartAnimationState startAnimationState,
         PlayerTurnState playerTurnState,
         EnemyTurnState enemyTurnState,
-        LevelTransitionState levelTransitionState)
+        LevelTransitionState levelTransitionState,
+        UpgradeState upgradeState)
     {
         _states = new Dictionary<Type, IGameState>
         {
             { typeof(StartAnimationState), startAnimationState },
             { typeof(PlayerTurnState), playerTurnState},
             { typeof(EnemyTurnState), enemyTurnState},
-            { typeof(LevelTransitionState), levelTransitionState}
+            { typeof(LevelTransitionState), levelTransitionState},
+            { typeof(UpgradeState), upgradeState},
         };
 
         Instance = this;

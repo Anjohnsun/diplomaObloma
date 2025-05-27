@@ -25,6 +25,10 @@ public class PawnStats : IPawnStats
     public int STR => _strConfig.Levels[STRLevel].Value;
     public int ARM => _armConfig.Levels[ARMLevel].Value;
 
+    public StatConfigSO HPConfig => _hpConfig;
+    public StatConfigSO APConfig => _apConfig;
+    public StatConfigSO STRConfig => _strConfig;
+    public StatConfigSO ARMConfig => _armConfig;
 
     public event Action<int> OnDamageTaken;
     public event Action OnDeath;
@@ -98,6 +102,8 @@ public class PawnStats : IPawnStats
         int currentLevel = 0;
         int xpCost = 0;
 
+        Debug.Log($"{statType.ToString()}, currentLevel: {APLevel}, maxLevel: {APConfig.Levels.Count}");
+
         switch (statType)
         {
             case StatType.HP:
@@ -155,4 +161,9 @@ public class PawnStats : IPawnStats
         EXP += value;
     }
 
+    public void ResetAP()
+    {
+        CurrentAP = MaxAP;
+        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
+    }
 }

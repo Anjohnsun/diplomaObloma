@@ -8,7 +8,6 @@ public class PlusMove : IMoveStrategy
     {
         List<FieldTile> moves = new List<FieldTile>();
 
-        // ходы
         Vector2Int[] possibleMoves = new Vector2Int[]
         {
             new Vector2Int(currentPosition.x + 1, currentPosition.y),
@@ -17,7 +16,8 @@ public class PlusMove : IMoveStrategy
             new Vector2Int(currentPosition.x, currentPosition.y - 1),
         };
 
-        moves = GridManager.Instance.GetAvailableTargets(new List<Vector2Int>(possibleMoves), GridManager.IsFreeTile);
+        moves = GridManager.Instance.GetAvailableTargets(new List<Vector2Int>(possibleMoves), 
+            GridManager.IsFreeTile);
 
         return moves;
     }

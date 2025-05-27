@@ -11,8 +11,6 @@ public class EnemyTurnState : IGameState
 
     public void Enter()
     {
-        Debug.Log("-> Enemy Turn State");
-
         _enemyManager.StartEnemyTurn();
     }
 

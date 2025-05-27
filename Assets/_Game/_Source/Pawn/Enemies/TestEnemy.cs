@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class TestEnemy : AEnemyPawn
@@ -5,13 +6,16 @@ public class TestEnemy : AEnemyPawn
     public override void Construct(int hpLvl, int apLvl, int strLvl, int armLvl)
     {
         base.Construct(hpLvl, apLvl, strLvl, armLvl);
-        MoveAction = new MoveAction(this, new PlusMove());
-        AttackAction = new AttackAction(this, new LittleSword(this));
     }
 
-    protected override void ChooseAndPerformAction()
+    public override void PerformActions()
     {
-        base.ChooseAndPerformAction();
+        base.PerformActions();
         Debug.Log("Test enemy performing action");
+    }
+
+    public override string GetHintText()
+    {
+        return "Сейчас эта пешка даже не может дать сдачи, надо этим воспользоваться!";
     }
 }

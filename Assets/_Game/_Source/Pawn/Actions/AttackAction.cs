@@ -44,6 +44,8 @@ public class AttackAction : IPawnAction
             int damage = _weapon.CalculateDamage();
             targetTile.Pawn.PawnStats.TakeDamage(damage);
 
+            Pawn.PawnStats.UseAP();
+
             Pawn.transform.DOShakePosition(Duration, 0.3f)
                 .OnComplete(() => handler());
         }
@@ -54,11 +56,18 @@ public class AttackAction : IPawnAction
     }
 
     public void Cancel() { /*...*/ }
-    public void SelfRealize() { /*...*/ }
+    public void SelfRealize(Action handler) { /*...*/ }
 
     public bool CanPerform(Vector2 targetWorldPosition)
     {
         FieldTile targetTile = GridManager.Instance.WorldPositionToTile(targetWorldPosition);
         return targetTile != null && _possibleTargets.Contains(targetTile);
+    }
+
+    public bool CanPerformAuto()
+    {
+        if (CalculateTargets().Count > 0)
+            return true;
+        return false;
     }
 }
