@@ -77,7 +77,11 @@ public class LevelInfo : MonoBehaviour
             }
         }
 
-        _pawns = _enemySpawner.SpawnEnemies(_tiles, _levelIndex);
+        //_pawns = _enemySpawner.SpawnEnemies(_tiles, _levelIndex);
+
+        //заглушка
+        _pawns = new List<APawn>();
+
         handler.Invoke();
         yield return null;
     }

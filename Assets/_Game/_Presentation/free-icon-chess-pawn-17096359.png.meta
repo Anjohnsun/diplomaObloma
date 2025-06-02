@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      free-icon-chess-pawn-17096359_0: -1705080930264439926
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

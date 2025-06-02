@@ -8,14 +8,18 @@ public class StartAnimationState : IGameState
 {
     private TextMeshProUGUI _startText;
     private MonoBehaviour _coroutines;
-    public StartAnimationState(TextMeshProUGUI startText, MonoBehaviour coroutines)
+    private GameplayUI _UI;
+
+    public StartAnimationState(TextMeshProUGUI startText, MonoBehaviour coroutines, GameplayUI ui)
     {
         _startText = startText;
         _coroutines = coroutines;
+        _UI = ui;
     }
 
     public void Enter()
     {
+        _UI.HideGameplayInterface();
         _coroutines.StartCoroutine(StartAnimCor());
     }
 

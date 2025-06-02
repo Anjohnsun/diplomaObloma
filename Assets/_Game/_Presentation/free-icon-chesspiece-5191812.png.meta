@@ -197,7 +197,10 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      free-icon-chesspiece-5191812_0: 8338088535171389306
+      free-icon-chesspiece-5191812_1: 2360536850651187911
+      free-icon-chesspiece-5191812_2: 6151070981745509086
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

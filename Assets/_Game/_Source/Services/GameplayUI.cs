@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public class GameplayUI : MonoBehaviour, IGameplayUIService
 {
@@ -29,12 +30,13 @@ public class GameplayUI : MonoBehaviour, IGameplayUIService
     [SerializeField] private List<Button> _upgradeButtons;
     [SerializeField] private List<TextMeshProUGUI> _upgradeTextFields;
 
-    [SerializeField] private float _showHideDuration;
+    [SerializeField] private float _animDuration;
     public List<Button> UpgradeButtons => _upgradeButtons;
 
-    public void Costruct(IPawnStats playerStats)
+    [Inject]
+    public void Construct(PlayerPawn player)
     {
-        _playerStats = playerStats;
+        _playerStats = player.PawnStats;
     }
 
     public void HideEscMenu()
@@ -47,15 +49,15 @@ public class GameplayUI : MonoBehaviour, IGameplayUIService
 
     }
 
-    public void UnlockUpgrade(bool v)
+    public void UnlockUpgrade(bool value)
     {
         if (_upgradeButtons.Count != _upgradeTextFields.Count)
             throw new System.Exception("Upgrade button/text field counts not equal");
 
-        if (v)
+        if (value)
         {
             Debug.Log("This should UNLOCK upgrade buttons");
-            Debug.Log($"Сравнение. APLevel: {_playerStats.APLevel}, APLevelCount: {_playerStats.APConfig.Levels.Count}");
+            //Debug.Log($"Сравнение. APLevel: {_playerStats.APLevel}, APLevelCount: {_playerStats.APConfig.Levels.Count}");
             if (_playerStats.APLevel < _playerStats.APConfig.Levels.Count - 1)
             {
                 _upgradeTextFields[0].text = _playerStats.APConfig.Levels[_playerStats.APLevel + 1].XPCost.ToString();
@@ -95,18 +97,28 @@ public class GameplayUI : MonoBehaviour, IGameplayUIService
 
     public void HideGameplayInterface()
     {
-        _statsTransform.DOAnchorPos(_hidePosition1, _showHideDuration);
-        _tileInfo.DOAnchorPos(_hidePosition2, _showHideDuration);
-        _menu.DOAnchorPos(_hidePosition3, _showHideDuration);
-        _actions.DOAnchorPos(_hidePosition3, _showHideDuration);
+        _statsTransform.DOKill();
+        _tileInfo.DOKill();
+        _menu.DOKill();
+        _actions.DOKill();
+
+        _statsTransform.DOAnchorPos(_hidePosition1, _animDuration);
+        _tileInfo.DOAnchorPos(_hidePosition2, _animDuration);
+        _menu.DOAnchorPos(_hidePosition3, _animDuration);
+        _actions.DOAnchorPos(_hidePosition4, _animDuration);
     }
 
     public void ShowGameplayInterface()
     {
-        _statsTransform.DOAnchorPos(_showPosition1, _showHideDuration);
-        _tileInfo.DOAnchorPos(_showPosition2, _showHideDuration);
-        _menu.DOAnchorPos(_showPosition3, _showHideDuration);
-        _actions.DOAnchorPos(_showPosition4, _showHideDuration);
+        _statsTransform.DOKill();
+        _tileInfo.DOKill();
+        _menu.DOKill();
+        _actions.DOKill();
+
+        _statsTransform.DOAnchorPos(_showPosition1, _animDuration);
+        _tileInfo.DOAnchorPos(_showPosition2, _animDuration);
+        _menu.DOAnchorPos(_showPosition3, _animDuration);
+        _actions.DOAnchorPos(_showPosition4, _animDuration);
     }
 
     public void UpdatePlayerStats(IPawnStats pawnStats)

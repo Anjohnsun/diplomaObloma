@@ -22,9 +22,16 @@ public class EnemyManager
         }
     }
     public void AddPawn(APawn pawn) => _pawns.Add(pawn);
-    public void RemovePawn(APawn pawn) => _pawns.Remove(pawn);
-    public void StartEnemyTurn() => _coroutines.StartCoroutine(EnemyTurnSequence());
-    private IEnumerator EnemyTurnSequence()
+    public void RemovePawn(APawn pawn)
+    {
+        _pawns.Remove(pawn);
+        if (EnemyCount <= 0)
+        {
+            StateManager.Instance.ChangeState<UpgradeState>();
+        }
+    }
+    public void StartEnemyTurn() => _coroutines.StartCoroutine(EnemyTurnCor());
+    private IEnumerator EnemyTurnCor()
     {
         Debug.Log($"-> EnemyTurn");
         if (EnemyCount <= 0)

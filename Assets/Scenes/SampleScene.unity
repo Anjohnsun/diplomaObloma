@@ -152,10 +152,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 601585619}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -24.768}
-  m_SizeDelta: {x: 0, y: -49.537}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 140, y: -24.767998}
+  m_SizeDelta: {x: 280, y: 150.463}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &226709222
 MonoBehaviour:
@@ -1043,10 +1043,10 @@ RectTransform:
   - {fileID: 226709221}
   m_Father: {fileID: 698703166}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -720, y: 265.3128}
-  m_SizeDelta: {x: 280, y: 199.0732}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 240, y: -274.6872}
+  m_SizeDelta: {x: 280, y: 199.07318}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &601585620
 MonoBehaviour:
@@ -1203,18 +1203,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3b23c178bfb1a34281757a5194ad218, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _statsTransform: {fileID: 0}
-  _hidePosition1: {x: -200, y: 0}
-  _showPosition1: {x: 230, y: 0}
+  _statsTransform: {fileID: 1193774813}
+  _hidePosition1: {x: -240, y: 40}
+  _showPosition1: {x: 240, y: 40}
   _tileInfo: {fileID: 1147691006}
-  _hidePosition2: {x: 200, y: 0}
-  _showPosition2: {x: -230, y: 0}
+  _hidePosition2: {x: 240, y: -7}
+  _showPosition2: {x: -240, y: -7}
   _menu: {fileID: 456479308}
   _hidePosition3: {x: -75, y: -75}
   _showPosition3: {x: 75, y: -75}
   _actions: {fileID: 601585619}
-  _hidePosition4: {x: 0, y: -85}
-  _showPosition4: {x: 0, y: 70}
+  _hidePosition4: {x: -240, y: -274}
+  _showPosition4: {x: 240, y: -274}
   _statsTextField: {fileID: 1086427654}
   _upgradeButtons:
   - {fileID: 801569402}
@@ -1226,7 +1226,7 @@ MonoBehaviour:
   - {fileID: 1862278419}
   - {fileID: 1693551375}
   - {fileID: 1515583961}
-  _showHideDuration: 0.5
+  _animDuration: 0.5
 --- !u!114 &698703163
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -46,7 +46,7 @@ public class PawnStats : IPawnStats
         ARMLevel = armLevel;
 
         ResetStats();
-        OnStatsChanged += () => Debug.Log("Stats Updated");
+        OnStatsChanged += () => Mathf.Round(1);
         OnStatsChanged.Invoke();
     }
 

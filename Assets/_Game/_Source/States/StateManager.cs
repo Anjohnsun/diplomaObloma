@@ -9,6 +9,8 @@ public class StateManager
     private readonly Dictionary<Type, IGameState> _states;
     private IGameState _currentState;
 
+    public Type CurrentState => _currentState.GetType();
+
     public static StateManager Instance { get; private set; }
 
     public StateManager(

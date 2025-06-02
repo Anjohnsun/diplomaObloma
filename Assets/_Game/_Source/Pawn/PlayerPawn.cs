@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -7,9 +8,8 @@ using UnityEngine.UI;
 public class PlayerPawn : APawn
 {
     private PlayerInput _input;
-    private bool _inputEnabled;
 
-    private int _chosenActionIndex;
+    private int _chosenActionIndex = -1;
     List<FieldTile> _tiles;
 
     [SerializeField] private GameplayUI _gameplayUI;
@@ -48,22 +48,29 @@ public class PlayerPawn : APawn
         PawnTeam = PawnTeam.Player;
     }
 
-    public void EnableInput(bool v)
+    private void EnableActionButtons(bool value)
     {
-        if (v)
+        foreach (Button button in _actionButtons)
+        {
+            button.interactable = value;
+        }
+    }
+
+    public void EnableInput(bool value)
+    {
+        if (value)
         {
             if (PawnStats.CurrentAP <= 0)
             {
                 PawnStats.StartTurn();
             }
 
-            _inputEnabled = true;
             _input.Enable();
-            //ChooseDefaultActions();
+            EnableActionButtons(value);
+            ChooseAction(0);
         }
         else
         {
-            _inputEnabled = false;
             _input.Disable();
         }
     }
@@ -94,42 +101,37 @@ public class PlayerPawn : APawn
 
         FieldTile tile = GridManager.Instance.WorldPositionToTile(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()));
         _actions[_chosenActionIndex].Perform(tile, () => HandleActionEnding());
+
+        if (StateManager.Instance.CurrentState == typeof(UpgradeState))
+        {
+            PawnStats.ResetAP();
+        }
     }
 
     private void HandleActionEnding()
     {
-/*        if (_endlessActions)
+        Debug.Log($"PawnYPos: {GridPosition.y}, LevelYSize: {GridManager.Instance.VerticalSize - 1}");
+
+        if (GridPosition.y == GridManager.Instance.VerticalSize - 1)
         {
-            _pawn.PawnStats.ResetAP();
-        }*/
+            Debug.Log("Start level transition");
+            LevelManager.Instance.StartLevelTransition();
+        }
+
 
         if (PawnStats.CurrentAP <= 0)
         {
-            if (GridPosition.y == GridManager.Instance.VerticalSize - 1)
-            {
-                LevelManager.Instance.StartLevelTransition();
-            }
             GridManager.Instance.DemarkTiles();
             StateManager.Instance.ChangeState<EnemyTurnState>();
         }
         else
         {
-            if (GridPosition.y == GridManager.Instance.VerticalSize - 1)
-            {
-                LevelManager.Instance.StartLevelTransition();
-            }
             EnableInput(true);
         }
     }
 
-    /*    private void ChooseDefaultActions()
-        {
-            GridManager.Instance.DemarkTiles();
-
-            _tiles = _pawn.MoveAction.CalculateTargets();
-            GridManager.Instance.MarkTiles(_tiles, MarkerType.interact);
-
-            _tiles = _pawn.AttackAction.CalculateTargets();
-            GridManager.Instance.MarkTiles(_tiles, MarkerType.attack);
-        }*/
+    public void UnlockUpgrade(bool value)
+    {
+        //
+    }
 }

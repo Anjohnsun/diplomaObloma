@@ -70,13 +70,17 @@ public class LevelManager : MonoBehaviour
         _nextLevel = Instantiate(nextLevelPrefab, spawnPos, Quaternion.identity);
 
         int levelNumber = _currentLevelIndex + 1;
-        _nextLevel.GetComponent<LevelInfo>().GenerateLevel(levelNumber, _enemySpawner, () => CompleteLevelTransition());
+        _nextLevel.GetComponent<LevelInfo>().GenerateLevel(levelNumber, _enemySpawner, () => Mathf.Round(1));
     }
 
     public void StartLevelTransition()
     {
+        PrepareNextLevel();
+        Debug.Log($"New level exists: {_nextLevel == null}");
+
         if (_nextLevel == null)
             throw new System.Exception("Next level not prepared!");
+
 
         StateManager.Instance.ChangeState<LevelTransitionState>();
 
@@ -89,12 +93,10 @@ public class LevelManager : MonoBehaviour
             .SetEase(Ease.InOutQuad)
             .OnComplete(CompleteLevelTransition));
 
-        PrepareNextLevel();
     }
 
     private void CompleteLevelTransition()
     {
-
         _currentLevel = _nextLevel;
         _nextLevel = null;
 

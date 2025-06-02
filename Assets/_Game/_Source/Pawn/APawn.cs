@@ -44,7 +44,6 @@ public abstract class APawn : MonoBehaviour, IHintUser
             {
                 throw new Exception("Tile for movement is not empty!");
             }
-            Debug.Log($"Pawn position: {GridPosition.ToString()}");
         }
     }
 

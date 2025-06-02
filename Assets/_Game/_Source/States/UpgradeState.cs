@@ -13,16 +13,17 @@ public class UpgradeState : IGameState
     }
     public void Enter()
     {
-/*        Debug.Log("-> Upgrade State");
-        _gameplayUI.UnlockUpgrade(true);
-        _playerPawn._endlessActions = true;
+        Debug.Log("-> Upgrade State");
 
-        _playerPawn.EnableInput();*/
+        _gameplayUI.UnlockUpgrade(true);
+        _playerPawn.UnlockUpgrade(true);
+
+        _playerPawn.EnableInput(true);
     }
 
     public void Exit()
     {
-/*        _gameplayUI.UnlockUpgrade(false);
-        _playerPawn._endlessActions = false;*/
+        _gameplayUI.UnlockUpgrade(false);
+        _playerPawn.UnlockUpgrade(false);
     }
 }
