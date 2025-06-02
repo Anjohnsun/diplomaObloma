@@ -6,7 +6,6 @@ using UnityEngine.EventSystems;
 public class HintHandler : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _hintField;
-    [SerializeField] private float _uiCheckDistance = 10f;
 
     private void Update()
     {

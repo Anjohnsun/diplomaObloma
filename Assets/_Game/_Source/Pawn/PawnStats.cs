@@ -5,34 +5,29 @@ using UnityEngine;
 
 public class PawnStats : IPawnStats
 {
-    private readonly StatConfigSO _hpConfig;
-    private readonly StatConfigSO _apConfig;
-    private readonly StatConfigSO _strConfig;
-    private readonly StatConfigSO _armConfig;
+    public StatConfigSO HPConfig { get; private set; }
+    public StatConfigSO APConfig { get; private set; }
+    public StatConfigSO STRConfig { get; private set; }
+    public StatConfigSO ARMConfig { get; private set; }
 
     public int EXP { get; private set; }
+
+    public int CurrentHP { get; private set; }
+    public int CurrentAP { get; private set; }
+
+    public int MaxHP => HPConfig.Levels[HPLevel].Value;
+    public int MaxAP => APConfig.Levels[APLevel].Value;
+    public int STR => STRConfig.Levels[STRLevel].Value;
+    public int ARM => ARMConfig.Levels[ARMLevel].Value;
 
     public int HPLevel { get; private set; }
     public int APLevel { get; private set; }
     public int STRLevel { get; private set; }
     public int ARMLevel { get; private set; }
 
-    public int CurrentHP { get; set; }
-    public int CurrentAP { get; set; }
-
-    public int MaxHP => _hpConfig.Levels[HPLevel].Value;
-    public int MaxAP => _apConfig.Levels[APLevel].Value;
-    public int STR => _strConfig.Levels[STRLevel].Value;
-    public int ARM => _armConfig.Levels[ARMLevel].Value;
-
-    public StatConfigSO HPConfig => _hpConfig;
-    public StatConfigSO APConfig => _apConfig;
-    public StatConfigSO STRConfig => _strConfig;
-    public StatConfigSO ARMConfig => _armConfig;
-
     public event Action<int> OnDamageTaken;
     public event Action OnDeath;
-    public event Action<int, int, int, int> OnStatsChanged;
+    public event Action OnStatsChanged;
 
     public PawnStats(
         StatConfigSO hpConfig, int hpLevel,
@@ -40,10 +35,10 @@ public class PawnStats : IPawnStats
         StatConfigSO strConfig, int strLevel,
         StatConfigSO armConfig, int armLevel)
     {
-        _hpConfig = hpConfig;
-        _apConfig = apConfig;
-        _strConfig = strConfig;
-        _armConfig = armConfig;
+        HPConfig = hpConfig;
+        APConfig = apConfig;
+        STRConfig = strConfig;
+        ARMConfig = armConfig;
 
         HPLevel = hpLevel;
         APLevel = apLevel;
@@ -51,8 +46,8 @@ public class PawnStats : IPawnStats
         ARMLevel = armLevel;
 
         ResetStats();
-        OnStatsChanged += (int a, int f, int s, int r) => Mathf.Abs(0.4f);
-        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
+        OnStatsChanged += () => Debug.Log("Stats Updated");
+        OnStatsChanged.Invoke();
     }
 
     private void ResetStats()
@@ -61,7 +56,7 @@ public class PawnStats : IPawnStats
         CurrentAP = MaxAP;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, bool isBonusDamage)
     {
         int remainingDamage = damage - ARM;
 
@@ -76,7 +71,7 @@ public class PawnStats : IPawnStats
             }
         }
 
-        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
+        OnStatsChanged.Invoke();
     }
 
     public void Heal(int amount)
@@ -87,16 +82,28 @@ public class PawnStats : IPawnStats
     public void UseAP(int amount = 1)
     {
         CurrentAP = Mathf.Max(CurrentAP - amount, 0);
-        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
+        OnStatsChanged.Invoke();
     }
 
-    public void StartNewTurn()
+    public void ResetAP()
     {
         CurrentAP = MaxAP;
-        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
+        OnStatsChanged.Invoke();
     }
 
-    public bool LevelUpStat(StatType statType)
+    public void GetEXP(int value)
+    {
+        EXP += value;
+        OnStatsChanged.Invoke();
+    }
+
+    public void StartTurn()
+    {
+        CurrentAP = MaxAP;
+        OnStatsChanged.Invoke();
+    }
+
+    public bool UpgradeStat(StatType statType)
     {
         StatConfigSO config = null;
         int currentLevel = 0;
@@ -107,19 +114,19 @@ public class PawnStats : IPawnStats
         switch (statType)
         {
             case StatType.HP:
-                config = _hpConfig;
+                config = HPConfig;
                 currentLevel = HPLevel;
                 break;
             case StatType.AP:
-                config = _apConfig;
+                config = APConfig;
                 currentLevel = APLevel;
                 break;
             case StatType.STR:
-                config = _strConfig;
+                config = STRConfig;
                 currentLevel = STRLevel;
                 break;
             case StatType.ARM:
-                config = _armConfig;
+                config = ARMConfig;
                 currentLevel = ARMLevel;
                 break;
         }
@@ -152,18 +159,7 @@ public class PawnStats : IPawnStats
                 break;
         }
 
-        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
+        OnStatsChanged.Invoke();
         return true;
-    }
-
-    public void AddEXP(int value)
-    {
-        EXP += value;
-    }
-
-    public void ResetAP()
-    {
-        CurrentAP = MaxAP;
-        OnStatsChanged.Invoke(CurrentHP, CurrentAP, STR, ARM);
     }
 }

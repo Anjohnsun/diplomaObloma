@@ -1,11 +1,13 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
     [SerializeField] private LevelManager _levelManager;
-    [SerializeField] private PlayerPawnHandler _playerHandler;
+    [SerializeField] private PlayerPawn _playerPawn;
+    [SerializeField] private TextMeshProUGUI _startText;
 
     public override void InstallBindings()
     {
@@ -22,9 +24,11 @@ public class GameInstaller : MonoInstaller
         Container.Bind<MonoBehaviour>().FromInstance(coroutines).AsTransient();
 
         Container.Bind<LevelManager>().FromInstance(_levelManager).AsSingle();
-        Container.Bind<PlayerPawnHandler>().FromInstance(_playerHandler).AsSingle();
+        Container.Bind<PlayerPawn>().FromInstance(_playerPawn).AsSingle();
         Container.Bind<GameplayUI>().FromComponentInHierarchy().AsSingle();
         Container.Bind<EnemyManager>().AsSingle();
+
+        Container.Bind<TextMeshProUGUI>().FromInstance(_startText).AsSingle();
 
     }
 }

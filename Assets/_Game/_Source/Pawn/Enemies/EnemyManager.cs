@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyManager
 {
-    private List<Pawn> _pawns = new List<Pawn>();
+    private List<APawn> _pawns = new List<APawn>();
     private MonoBehaviour _coroutines;
 
     public int EnemyCount => _pawns.Count;
@@ -13,7 +13,7 @@ public class EnemyManager
     {
         _coroutines = coroutineRunner;
     }
-    public void InitPawns(List<Pawn> pawns)
+    public void InitPawns(List<APawn> pawns)
     {
         _pawns = pawns;
         foreach (var pawn in _pawns)
@@ -21,8 +21,8 @@ public class EnemyManager
             pawn.PawnStats.OnDeath += () => RemovePawn(pawn);
         }
     }
-    public void AddPawn(Pawn pawn) => _pawns.Add(pawn);
-    public void RemovePawn(Pawn pawn) => _pawns.Remove(pawn);
+    public void AddPawn(APawn pawn) => _pawns.Add(pawn);
+    public void RemovePawn(APawn pawn) => _pawns.Remove(pawn);
     public void StartEnemyTurn() => _coroutines.StartCoroutine(EnemyTurnSequence());
     private IEnumerator EnemyTurnSequence()
     {
@@ -48,7 +48,7 @@ public class EnemyManager
             if (enemy == null || enemy.PawnStats.CurrentAP <= 0) continue;
 
             pawn = (AEnemyPawn)enemy;
-            pawn.PerformActions();
+            //pawn.PerformActions();
         }
 
         yield return new WaitForSeconds(0.5f);

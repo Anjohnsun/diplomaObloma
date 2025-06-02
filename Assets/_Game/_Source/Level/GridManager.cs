@@ -75,7 +75,7 @@ public class GridManager
         return position.x >= 0 && position.x < _horizontalSize &&
                position.y >= 0 && position.y < _verticalSize;
     }
-    public void MovePawn(Pawn pawn, FieldTile tile)
+/*    public void MovePawn(Pawn pawn, FieldTile tile)
     {
         Vector2Int newPos = GetTileCoordinates(tile);
         if (newPos.x < 0 || newPos.y < 0) return;
@@ -83,7 +83,7 @@ public class GridManager
         _grid[pawn.GridPosition.x, pawn.GridPosition.y].RemovePawn();
         tile.SetNewPawn(pawn);
         pawn.GridPosition = newPos;
-    }
+    }*/
     public Vector2Int GetTileCoordinates(FieldTile tile)
     {
         if (tile == null) return new Vector2Int(-1, -1);

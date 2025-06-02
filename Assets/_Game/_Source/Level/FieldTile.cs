@@ -11,9 +11,9 @@ public class FieldTile : MonoBehaviour
 
     [SerializeField] private float _animDuration = 0.3f;
     [SerializeField] private float _targetAlfa = 0.7f;
-    public Pawn Pawn { get; private set; }
+    public APawn Pawn { get; private set; }
 
-    public void SetNewPawn(Pawn pawn)
+    public void SetNewPawn(APawn pawn)
     {
         if (Pawn != null)
             throw new System.Exception("Pawn substitution attempt");
@@ -21,9 +21,9 @@ public class FieldTile : MonoBehaviour
             Pawn = pawn;
     }
 
-    public Pawn RemovePawn()
+    public APawn RemovePawn()
     {
-        Pawn pawn = Pawn;
+        APawn pawn = Pawn;
         Pawn = null;
         return pawn;
     }

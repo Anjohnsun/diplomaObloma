@@ -5,8 +5,9 @@ using Zenject;
 public class EntryPoint : MonoBehaviour
 {
     [Inject]
-    private void Construct()
+    private void Construct(PlayerPawn player)
     {
+        player.Construct(0, 0, 0, 0);
     }
 
     IEnumerator Start()

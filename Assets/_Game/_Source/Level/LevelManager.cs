@@ -41,14 +41,13 @@ public class LevelManager : MonoBehaviour
     public void InitializeFirstLevel()
     {
         _currentLevel = Instantiate(_levelPrefabs[0], Vector3.zero, Quaternion.identity);
-        _currentLevel.GetComponent<LevelInfo>().GenerateLevel(0, _enemySpawner);
+        _currentLevel.GetComponent<LevelInfo>().GenerateLevel(0, _enemySpawner, () => _currentLevel.GetComponent<LevelInfo>().InitLevel(_player.GetComponent<APawn>()));
 
         _mainCamera.transform.position = new Vector3(0, -_levelSpacing, _mainCamera.transform.position.z
         );
 
         _mainCamera.transform.DOMoveY(_cameraOffsetY, _transitionDuration).SetEase(Ease.OutQuad).OnComplete(() =>
             {
-                _currentLevel.GetComponent<LevelInfo>().InitLevel(_enemyManager, _player.GetComponent<Pawn>());
                 FieldTile startTile = GridManager.Instance.GetTileAtGridPosition(_currentLevel.GetComponent<LevelInfo>().PlayerPosition);
                 _player.DOMove(startTile.transform.position, _playerTransitionDur).OnComplete(() =>
                 {
@@ -58,8 +57,6 @@ public class LevelManager : MonoBehaviour
                 });
 
 
-
-                PrepareNextLevel();
             });
     }
 
@@ -69,11 +66,11 @@ public class LevelManager : MonoBehaviour
 
         GameObject nextLevelPrefab = _levelPrefabs[Random.Range(0, _levelPrefabs.Count)];
 
-        Vector3 spawnPos = _currentLevel.transform.position + Vector3.up * _levelSpacing;
+        Vector3 spawnPos = _mainCamera.transform.position + Vector3.up * _levelSpacing;
         _nextLevel = Instantiate(nextLevelPrefab, spawnPos, Quaternion.identity);
 
         int levelNumber = _currentLevelIndex + 1;
-        _nextLevel.GetComponent<LevelInfo>().GenerateLevel(levelNumber, _enemySpawner);
+        _nextLevel.GetComponent<LevelInfo>().GenerateLevel(levelNumber, _enemySpawner, () => CompleteLevelTransition());
     }
 
     public void StartLevelTransition()
@@ -91,6 +88,8 @@ public class LevelManager : MonoBehaviour
             .Append(_mainCamera.transform.DOMoveY(_nextLevel.transform.position.y + _cameraOffsetY, _transitionDuration)
             .SetEase(Ease.InOutQuad)
             .OnComplete(CompleteLevelTransition));
+
+        PrepareNextLevel();
     }
 
     private void CompleteLevelTransition()
@@ -99,7 +98,7 @@ public class LevelManager : MonoBehaviour
         _currentLevel = _nextLevel;
         _nextLevel = null;
 
-        _currentLevel.GetComponent<LevelInfo>().InitLevel(_enemyManager, _player.GetComponent<Pawn>());
+        _currentLevel.GetComponent<LevelInfo>().InitLevel(_enemyManager, _player.GetComponent<APawn>());
         FieldTile startTile = GridManager.Instance.GetTileAtGridPosition(_currentLevel.GetComponent<LevelInfo>().PlayerPosition);
 
         Debug.Log($"LevelManager: move pawn");
@@ -108,6 +107,5 @@ public class LevelManager : MonoBehaviour
 
 
         _currentLevelIndex += 1;
-        PrepareNextLevel();
     }
 }

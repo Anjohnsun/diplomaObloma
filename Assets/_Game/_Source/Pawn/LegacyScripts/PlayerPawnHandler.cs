@@ -1,4 +1,4 @@
-/*using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -9,7 +9,7 @@ using Zenject;
 
 public class PlayerPawnHandler : MonoBehaviour
 {
-    [SerializeField] private Pawn _pawn;
+/*    [SerializeField] private Pawn _pawn;
 
     private PlayerInput _input;
     private bool _inputEnabled;
@@ -47,7 +47,7 @@ public class PlayerPawnHandler : MonoBehaviour
         _gameplayUI.UpgradeButtons[2].onClick.AddListener(() => _pawn.PawnStats.LevelUpStat(StatType.ARM));
         _gameplayUI.UpgradeButtons[3].onClick.AddListener(() => _pawn.PawnStats.LevelUpStat(StatType.STR));
 
-        //_pawn.PawnStats.OnStatsChanged += UpdateUI;
+        _pawn.PawnStats.OnStatsChanged += UpdateUI;
         UpdateUI(_pawn.PawnStats.CurrentHP, _pawn.PawnStats.CurrentAP, _pawn.PawnStats.STR, _pawn.PawnStats.ARM);
 
         _input = new PlayerInput();
@@ -163,6 +163,5 @@ public class PlayerPawnHandler : MonoBehaviour
     private void SkipTurn()
     {
         StateManager.Instance.ChangeState<EnemyTurnState>();
-    }
+    }*/
 }
-*/

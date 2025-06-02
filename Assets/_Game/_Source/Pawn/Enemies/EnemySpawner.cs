@@ -11,10 +11,10 @@ public class EnemySpawner : MonoBehaviour
 
     private FieldTile[,] _tiles;
 
-    public List<Pawn> SpawnEnemies(FieldTile[,] tiles, int level)
+    public List<APawn> SpawnEnemies(FieldTile[,] tiles, int level)
     {
         _tiles = tiles;
-        List<Pawn> enemies = new List<Pawn>();
+        List<APawn> enemies = new List<APawn>();
 
         var enemiesToSpawn = GetEnemiesForLevel(level);
 
@@ -35,7 +35,7 @@ public class EnemySpawner : MonoBehaviour
         return enemies;
     }
 
-    private List<Pawn> GetEnemiesForLevel(int levelNumber)
+    private List<APawn> GetEnemiesForLevel(int levelNumber)
     {
         return _enemyConfigs
             .Where(c => c.MinLevel <= levelNumber)
@@ -73,6 +73,6 @@ public class EnemySpawner : MonoBehaviour
 [Serializable]
 public class EnemySpawnConfig
 {
-    public Pawn Prefab;
+    public APawn Prefab;
     public int MinLevel;
 }

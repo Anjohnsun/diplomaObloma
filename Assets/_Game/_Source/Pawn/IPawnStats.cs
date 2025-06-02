@@ -3,20 +3,21 @@ using UnityEngine;
 
 public interface IPawnStats
 {
+    StatConfigSO HPConfig { get; }
+    StatConfigSO APConfig { get; }
+    StatConfigSO STRConfig { get; }
+    StatConfigSO ARMConfig { get; }
+
     int EXP { get; }
 
-    int CurrentHP { get; set; }
-    int CurrentAP { get; set; }
+    int CurrentHP { get;}
+    int CurrentAP { get;}
 
     int MaxHP { get; }
     int MaxAP { get; }
     int STR { get; }
     int ARM { get; }
 
-    StatConfigSO HPConfig { get; }
-    StatConfigSO APConfig { get; }
-    StatConfigSO STRConfig { get; }
-    StatConfigSO ARMConfig { get; }
 
     int HPLevel { get; }
     int APLevel { get; }
@@ -25,15 +26,15 @@ public interface IPawnStats
 
     event Action<int> OnDamageTaken;
     event Action OnDeath;
-    event Action<int, int, int, int> OnStatsChanged;
+    event Action OnStatsChanged;
 
-    void TakeDamage(int damage);
+    void TakeDamage(int damage, bool isBonusDamage);
     void Heal(int amount);
     void UseAP(int amount = 1);
     void ResetAP();
-    void AddEXP (int value);
-    void StartNewTurn();
-    bool LevelUpStat(StatType statType);
+    void GetEXP (int value);
+    void StartTurn();
+    bool UpgradeStat(StatType statType);
 }
 
 public enum StatType

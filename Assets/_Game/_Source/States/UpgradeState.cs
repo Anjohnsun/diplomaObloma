@@ -4,25 +4,25 @@ using Zenject;
 public class UpgradeState : IGameState
 {
     private GameplayUI _gameplayUI;
-    private PlayerPawnHandler _playerPawnHandler;
+    private PlayerPawn _playerPawn;
 
-    public UpgradeState(GameplayUI gameplayUI, PlayerPawnHandler playerPawnHandler)
+    public UpgradeState(GameplayUI gameplayUI, PlayerPawn playerPawn)
     {
         _gameplayUI = gameplayUI;
-        _playerPawnHandler = playerPawnHandler;
+        _playerPawn = playerPawn;
     }
     public void Enter()
     {
-        Debug.Log("-> Upgrade State");
+/*        Debug.Log("-> Upgrade State");
         _gameplayUI.UnlockUpgrade(true);
-        _playerPawnHandler._endlessActions = true;
+        _playerPawn._endlessActions = true;
 
-        _playerPawnHandler.EnableInput();
+        _playerPawn.EnableInput();*/
     }
 
     public void Exit()
     {
-        _gameplayUI.UnlockUpgrade(false);
-        _playerPawnHandler._endlessActions = false;
+/*        _gameplayUI.UnlockUpgrade(false);
+        _playerPawn._endlessActions = false;*/
     }
 }

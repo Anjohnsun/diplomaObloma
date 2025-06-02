@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
 
-public abstract class AEnemyPawn : Pawn
+public abstract class AEnemyPawn : APawn
 {
-    [SerializeField] protected int _givesExp;
+/*    [SerializeField] protected int _givesExp;
 
     public Action _OnPawnDie;
 
@@ -29,5 +29,5 @@ public abstract class AEnemyPawn : Pawn
     {
         Debug.Log("Pawn died");
         Destroy(gameObject);
-    }
+    }*/
 }

@@ -14,11 +14,11 @@ public class LevelInfo : MonoBehaviour
 
     public Vector2Int PlayerPosition => _playerPosition;
 
-    private List<Pawn> _pawns;
+    private List<APawn> _pawns;
     private EnemySpawner _enemySpawner;
     private int _levelIndex;
 
-    public void GenerateLevel(int number, EnemySpawner spawner)
+    public void GenerateLevel(int number, EnemySpawner spawner, Action handler)
     {
         _enemySpawner = spawner;
         _levelIndex = number;
@@ -28,17 +28,18 @@ public class LevelInfo : MonoBehaviour
 
         _tiles = new FieldTile[_size.x, _size.y];
 
+
         switch (number)
         {
             case 0:
-                StartCoroutine(GenerateFirstLevelCor());
+                StartCoroutine(GenerateFirstLevelCor(handler));
                 break;
             default:
-                StartCoroutine(GenerateLevelCor());
+                StartCoroutine(GenerateLevelCor(handler));
                 break;
         }
     }
-    private IEnumerator GenerateFirstLevelCor()
+    private IEnumerator GenerateFirstLevelCor(Action handler)
     {
         for (int visualRow = 0; visualRow < _size.y; visualRow++)
         {
@@ -55,10 +56,11 @@ public class LevelInfo : MonoBehaviour
             }
         }
 
-        _pawns = new List<Pawn>();
+        _pawns = new List<APawn>();
+        handler.Invoke();
         yield return null;
     }
-    private IEnumerator GenerateLevelCor()
+    private IEnumerator GenerateLevelCor(Action handler)
     {
         for (int visualRow = 0; visualRow < _size.y; visualRow++)
         {
@@ -74,20 +76,30 @@ public class LevelInfo : MonoBehaviour
                 _tiles[column, matrixRow].Construct();
             }
         }
-        yield return null;
 
         _pawns = _enemySpawner.SpawnEnemies(_tiles, _levelIndex);
-
+        handler.Invoke();
+        yield return null;
     }
-    public void InitLevel(EnemyManager enemyManager, Pawn playerPawn)
+    public void InitLevel(EnemyManager enemyManager, APawn playerPawn)
     {
         GridManager.Instance.InitializeGrid(_tiles, transform);
 
         enemyManager.InitPawns(_pawns);
 
-        _pawns = new List<Pawn>();
-        GridManager.Instance.MovePawn(playerPawn, _tiles[_playerPosition.x, _playerPosition.y]);
+        _pawns = new List<APawn>();
+        playerPawn.UpdateGridPosition(_playerPosition);
+        Debug.Log($"Player pos: {_playerPosition.ToString()}");
     }
+    public void InitLevel(APawn playerPawn)
+    {
+        GridManager.Instance.InitializeGrid(_tiles, transform);
+
+        _pawns = new List<APawn>();
+        playerPawn.UpdateGridPosition(_playerPosition);
+        Debug.Log($"Player pos: {_playerPosition.ToString()}");
+    }
+
     public void DestroyLevel()
     {
         StartCoroutine(DestroyLevelCor());

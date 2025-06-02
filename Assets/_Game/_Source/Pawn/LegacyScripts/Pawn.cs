@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
 
-public class Pawn : MonoBehaviour, IHintUser
+public class Pawn : MonoBehaviour, IHintUser 
 {
     [SerializeField] protected StatConfigSO _HP;
     [SerializeField] protected StatConfigSO _AP;

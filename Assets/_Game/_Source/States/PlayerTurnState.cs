@@ -3,17 +3,17 @@ using Zenject;
 
 public class PlayerTurnState : IGameState
 {
-    private PlayerPawnHandler _playerHandler;
-    public PlayerTurnState(PlayerPawnHandler playerHandler)
+    private PlayerPawn _playerPawn;
+    public PlayerTurnState(PlayerPawn playerPawn)
     {
-        _playerHandler = playerHandler;
+        _playerPawn = playerPawn;
     }
 
     public void Enter()
     {
         Debug.Log("-> Player Turn State");
 
-        _playerHandler.EnableInput();
+        _playerPawn.EnableInput(true);
     }
 
     public void Exit()
