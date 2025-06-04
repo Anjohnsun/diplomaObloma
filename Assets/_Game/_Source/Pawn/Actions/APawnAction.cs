@@ -8,7 +8,9 @@ public abstract class APawnAction
     protected float _duration;
 
     protected int _usesNumber;
+    protected List<FieldTile> _possibleMoves;
     public abstract Sprite ActionIcon { get; }
+    public abstract MarkerType Marker { get; }
 
     protected string _hint;
     public int UsesNumber => _usesNumber;
@@ -27,5 +29,5 @@ public abstract class APawnAction
         _usesNumber--;
     }
     public abstract void CanPerform(Vector2Int tile);
-    public abstract bool SelfPerform();
+    public abstract bool SelfPerform(Action handler);
 }

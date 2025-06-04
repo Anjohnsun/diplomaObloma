@@ -20,11 +20,14 @@ public class LevelManager : MonoBehaviour
 
     private GameObject _currentLevel;
     private GameObject _nextLevel;
+    private GameObject _previousLevel;
+
     private int _currentLevelIndex = 0;
     private Sequence _transitionSequence;
 
     private EnemyManager _enemyManager;
 
+    public PlayerPawn PlayerPawn => _player.GetComponent<PlayerPawn>();
     public static LevelManager Instance { get; private set; }
 
     [Inject]
@@ -53,7 +56,7 @@ public class LevelManager : MonoBehaviour
                 {
                     Debug.Log("LevelManager: first level inited");
 
-                    StateManager.Instance.ChangeState<PlayerTurnState>();
+                    StateManager.Instance.ChangeState<UpgradeState>();
                 });
 
 
@@ -76,7 +79,6 @@ public class LevelManager : MonoBehaviour
     public void StartLevelTransition()
     {
         PrepareNextLevel();
-        Debug.Log($"New level exists: {_nextLevel == null}");
 
         if (_nextLevel == null)
             throw new System.Exception("Next level not prepared!");
@@ -97,17 +99,25 @@ public class LevelManager : MonoBehaviour
 
     private void CompleteLevelTransition()
     {
+        _previousLevel = _currentLevel;
         _currentLevel = _nextLevel;
         _nextLevel = null;
 
+        Debug.Log("Init 1");
         _currentLevel.GetComponent<LevelInfo>().InitLevel(_enemyManager, _player.GetComponent<APawn>());
+        Debug.Log("Init 2");
         FieldTile startTile = GridManager.Instance.GetTileAtGridPosition(_currentLevel.GetComponent<LevelInfo>().PlayerPosition);
+        Debug.Log("Init 3");
 
         Debug.Log($"LevelManager: move pawn");
-        _player.DOMove(startTile.transform.position, _playerTransitionDur).OnComplete(() =>
-                    StateManager.Instance.ChangeState<PlayerTurnState>());
+        _player.DOMove(startTile.transform.position, _playerTransitionDur).OnComplete(() => {
+            StateManager.Instance.ChangeState<PlayerTurnState>();
+            _player.GetComponent<APawn>().PawnStats.StartTurn();
+        }); 
 
 
         _currentLevelIndex += 1;
+
+        _previousLevel.GetComponent<LevelInfo>().DestroyLevel();
     }
 }

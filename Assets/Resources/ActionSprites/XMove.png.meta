@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 836dbc071d0a7cb4aa2416df50ad5367
+guid: 20abbe20ce508bd40a54fdd851738c94
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1495370079431655132
-    second: free-icon-chess-piece-15730198_0
+      213: 1224614438585585352
+    second: "\u043E\u0433\u043E\u043D\u0435\u043A100_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: free-icon-chess-piece-15730198_0
+      name: "\u043E\u0433\u043E\u043D\u0435\u043A100_0"
       rect:
         serializedVersion: 2
-        x: 115
-        y: 15
-        width: 282
-        height: 482
+        x: 0
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4218ab7e5d06f3be0800000000000000
-      internalID: -1495370079431655132
+      spriteID: 8ce45b6f754bef010800000000000000
+      internalID: 1224614438585585352
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      free-icon-chess-piece-15730198_0: -1495370079431655132
+      "\u043E\u0433\u043E\u043D\u0435\u043A100_0": 1224614438585585352
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -15,6 +15,7 @@ public class UpgradeState : IGameState
     {
         Debug.Log("-> Upgrade State");
 
+        _gameplayUI.ShowGameplayInterface();
         _gameplayUI.UnlockUpgrade(true);
         _playerPawn.UnlockUpgrade(true);
 

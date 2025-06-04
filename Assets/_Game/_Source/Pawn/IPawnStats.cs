@@ -28,7 +28,7 @@ public interface IPawnStats
     event Action OnDeath;
     event Action OnStatsChanged;
 
-    void TakeDamage(int damage, bool isBonusDamage);
+    void TakeDamage(int damage, bool isBonusDamage = false);
     void Heal(int amount);
     void UseAP(int amount = 1);
     void ResetAP();

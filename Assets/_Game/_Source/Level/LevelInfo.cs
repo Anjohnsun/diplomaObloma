@@ -14,7 +14,7 @@ public class LevelInfo : MonoBehaviour
 
     public Vector2Int PlayerPosition => _playerPosition;
 
-    private List<APawn> _pawns;
+    private List<AEnemyPawn> _pawns;
     private EnemySpawner _enemySpawner;
     private int _levelIndex;
 
@@ -56,7 +56,7 @@ public class LevelInfo : MonoBehaviour
             }
         }
 
-        _pawns = new List<APawn>();
+        _pawns = new List<AEnemyPawn>();
         handler.Invoke();
         yield return null;
     }
@@ -77,10 +77,7 @@ public class LevelInfo : MonoBehaviour
             }
         }
 
-        //_pawns = _enemySpawner.SpawnEnemies(_tiles, _levelIndex);
-
-        //заглушка
-        _pawns = new List<APawn>();
+        _pawns = _enemySpawner.SpawnEnemies(_tiles, _levelIndex);
 
         handler.Invoke();
         yield return null;
@@ -88,26 +85,34 @@ public class LevelInfo : MonoBehaviour
     public void InitLevel(EnemyManager enemyManager, APawn playerPawn)
     {
         GridManager.Instance.InitializeGrid(_tiles, transform);
+        
+        foreach (var tile in _tiles)
+        {
+            if (tile.Pawn != null && !(tile.Pawn is PlayerPawn))
+            {
+                Debug.Log($"Обновление позиции. Позиция пешки: {tile.Pawn.GridPosition.ToString()}");
+            }
+        }
 
+        Debug.Log($"количество врагов: {_pawns.Count}");
         enemyManager.InitPawns(_pawns);
 
-        _pawns = new List<APawn>();
         playerPawn.UpdateGridPosition(_playerPosition);
-        Debug.Log($"Player pos: {_playerPosition.ToString()}");
     }
     public void InitLevel(APawn playerPawn)
     {
         GridManager.Instance.InitializeGrid(_tiles, transform);
 
-        _pawns = new List<APawn>();
         playerPawn.UpdateGridPosition(_playerPosition);
-        Debug.Log($"Player pos: {_playerPosition.ToString()}");
     }
 
     public void DestroyLevel()
     {
-        StartCoroutine(DestroyLevelCor());
+        foreach (APawn pawn in _pawns)
+            Destroy(pawn);
+        Destroy(gameObject);
     }
+        
     private IEnumerator DestroyLevelCor()
     {
         return null;

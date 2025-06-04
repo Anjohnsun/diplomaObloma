@@ -18,7 +18,8 @@ public class StateManager
         PlayerTurnState playerTurnState,
         EnemyTurnState enemyTurnState,
         LevelTransitionState levelTransitionState,
-        UpgradeState upgradeState)
+        UpgradeState upgradeState,
+        PlayerDeathState playerDeathState)
     {
         _states = new Dictionary<Type, IGameState>
         {
@@ -27,6 +28,7 @@ public class StateManager
             { typeof(EnemyTurnState), enemyTurnState},
             { typeof(LevelTransitionState), levelTransitionState},
             { typeof(UpgradeState), upgradeState},
+            {typeof(PlayerDeathState), playerDeathState }
         };
 
         Instance = this;

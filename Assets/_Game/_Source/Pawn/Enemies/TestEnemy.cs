@@ -3,23 +3,27 @@ using UnityEngine;
 
 public class TestEnemy : AEnemyPawn
 {
-    /*    public override void Construct(int hpLvl, int apLvl, int strLvl, int armLvl)
-        {
-            base.Construct(hpLvl, apLvl, strLvl, armLvl);
-        }
 
-        public override void PerformActions()
-        {
-            base.PerformActions();
-            Debug.Log("Test enemy performing action");
-        }
+    public override void PerformActions(Action handler)
+    {
+        base.PerformActions(handler);
+        Debug.Log("Test enemy performing action");
+        handler.Invoke();
+    }
 
-        public override string GetHintText()
-        {
-            return "Сейчас эта пешка даже не может дать сдачи, надо этим воспользоваться!";
-        }*/
+
     public override string GetHintText()
     {
-        throw new NotImplementedException();
+        return "Это тестовый враг. Его предстоит заменить на что-то адекватное";
+    }
+
+    public override void Construct(int currentLevel)
+    {
+        if (currentLevel < 1)
+            Construct(0, 0, 0, 0);
+        else if (currentLevel < 2)
+            Construct(1, 0, 0, 0);
+        else if (currentLevel < 3)
+            Construct(2, 0, 0, 1);
     }
 }

@@ -32,19 +32,15 @@ public abstract class APawn : MonoBehaviour, IHintUser
 
     public void UpdateGridPosition(Vector2Int newPosition)
     {
-        if (GridManager.Instance.GetTileAtGridPosition(GridPosition).Pawn == null || GridManager.Instance.GetTileAtGridPosition(GridPosition).Pawn.Equals(this))
-        {
-            GridManager.Instance.GetTileAtGridPosition(GridPosition).RemovePawn();
-            if (GridManager.Instance.GetTileAtGridPosition(GridPosition).Pawn == null)
-            {
-                GridPosition = newPosition;
-                GridManager.Instance.GetTileAtGridPosition(GridPosition).SetNewPawn(this);
-            }
-            else
-            {
-                throw new Exception("Tile for movement is not empty!");
-            }
-        }
+        GridManager.Instance.GetTileAtGridPosition(GridPosition)?.RemovePawn();
+        GridPosition = newPosition;
+
+        GridManager.Instance.GetTileAtGridPosition(newPosition).SetNewPawn(this);
+    }
+
+    public void SetGridPosition(Vector2Int newPosition)
+    {
+        GridPosition = newPosition;
     }
 
     public abstract string GetHintText();

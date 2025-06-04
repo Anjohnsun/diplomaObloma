@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class XMoveAction : APawnAction
 {
-    private List<FieldTile> _possibleMoves;
-
     public override Sprite ActionIcon => Resources.Load<Sprite>("ActionSprites/XMove");
+
+    public override MarkerType Marker => MarkerType.interact;
 
     public XMoveAction(APawn owner, float duration, int usesNumber) : base(owner, duration, usesNumber)
     {
@@ -27,6 +27,7 @@ public class XMoveAction : APawnAction
 
     public override void Perform(FieldTile tile, Action handler)
     {
+        Debug.Log("Perform XMove");
         if (tile != null && _possibleMoves.Contains(tile))
         {
             _owner.UpdateGridPosition(GridManager.Instance.GetTileCoordinates(tile));
@@ -45,9 +46,39 @@ public class XMoveAction : APawnAction
         }
     }
 
-    public override bool SelfPerform()
+    public override bool SelfPerform(Action handler)
     {
-        throw new NotImplementedException();
+        var possibleMoves = GetPossibleMoves(_owner.GridPosition);
+
+        if (possibleMoves.Count == 0)
+            return false;
+
+        Vector2Int playerPos = LevelManager.Instance.PlayerPawn.GridPosition;
+        Vector2Int currentPos = _owner.GridPosition;
+
+        FieldTile bestMove = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var move in possibleMoves)
+        {
+            float distance = Vector2Int.Distance(GridManager.Instance.GetTileCoordinates(move), playerPos);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                bestMove = move;
+            }
+        }
+
+        if (bestMove != null)
+        {
+            _owner.UpdateGridPosition(GridManager.Instance.GetTileCoordinates(bestMove));
+            _owner.PawnStats.UseAP();
+
+            _owner.transform.DOMove(bestMove.transform.position, _duration);
+            return true;
+        }
+
+        return false;
     }
 
     public List<FieldTile> GetPossibleMoves(Vector2Int currentPosition)

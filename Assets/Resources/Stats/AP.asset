@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: AP
   m_EditorClassIdentifier: 
   _levels:
-  - _xpCost: 0
+  - _xpCost: 5
     _value: 1
-  - _xpCost: 0
+  - _xpCost: 10
     _value: 2
-  - _xpCost: 0
+  - _xpCost: 20
     _value: 3
-  - _xpCost: 0
+  - _xpCost: 25
     _value: 4

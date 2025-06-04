@@ -26,6 +26,7 @@ public class GameplayUI : MonoBehaviour, IGameplayUIService
     [Header("Techical info")]
     [SerializeField] private IPawnStats _playerStats;
     [SerializeField] private TextMeshProUGUI _statsTextField;
+    [SerializeField] private TextMeshProUGUI _expTextField;
 
     [SerializeField] private List<Button> _upgradeButtons;
     [SerializeField] private List<TextMeshProUGUI> _upgradeTextFields;
@@ -37,6 +38,11 @@ public class GameplayUI : MonoBehaviour, IGameplayUIService
     public void Construct(PlayerPawn player)
     {
         _playerStats = player.PawnStats;
+
+        _upgradeButtons[0].onClick.AddListener(() => _playerStats.UpgradeStat(StatType.AP));
+        _upgradeButtons[1].onClick.AddListener(() => _playerStats.UpgradeStat(StatType.HP));
+        _upgradeButtons[2].onClick.AddListener(() => _playerStats.UpgradeStat(StatType.ARM));
+        _upgradeButtons[3].onClick.AddListener(() => _playerStats.UpgradeStat(StatType.STR));
     }
 
     public void HideEscMenu()
@@ -124,5 +130,6 @@ public class GameplayUI : MonoBehaviour, IGameplayUIService
     public void UpdatePlayerStats(IPawnStats pawnStats)
     {
         _statsTextField.text = $"AP: {pawnStats.CurrentAP}\nHP: {pawnStats.CurrentHP}\nARM: {pawnStats.ARM}\nSTR: {pawnStats.STR}";
+        _expTextField.text = $"EXP: {pawnStats.EXP}";
     }
 }

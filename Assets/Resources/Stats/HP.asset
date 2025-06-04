@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: HP
   m_EditorClassIdentifier: 
   _levels:
-  - _xpCost: 1
-    _value: 3
-  - _xpCost: 2
-    _value: 4
   - _xpCost: 3
+    _value: 3
+  - _xpCost: 7
+    _value: 4
+  - _xpCost: 10
     _value: 5
-  - _xpCost: 4
+  - _xpCost: 15
     _value: 6

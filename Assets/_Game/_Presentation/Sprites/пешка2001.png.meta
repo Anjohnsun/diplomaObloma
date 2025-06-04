@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: 021dd9067cb3f2340955d1cd36218683
+guid: 789ec4fcf4094ca4794b0e670d29ca35
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3632219908940728122
-    second: free-icon-chess-18951078_0
-  - first:
-      213: 1531892905826170876
-    second: free-icon-chess-18951078_1
-  - first:
-      213: 3575258237327342132
-    second: free-icon-chess-18951078_2
-  - first:
-      213: -5846485432903888089
-    second: free-icon-chess-18951078_3
+      213: -3506863444912564474
+    second: "\u043F\u0435\u0448\u043A\u04302001_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -55,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -122,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: free-icon-chess-18951078_0
+      name: "\u043F\u0435\u0448\u043A\u04302001_0"
       rect:
         serializedVersion: 2
-        x: 193
-        y: 348
-        width: 126
-        height: 119
+        x: 49
+        y: 19
+        width: 102
+        height: 152
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,74 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6c87c75bc33c79dc0800000000000000
-      internalID: -3632219908940728122
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: free-icon-chess-18951078_1
-      rect:
-        serializedVersion: 2
-        x: 178
-        y: 306
-        width: 156
-        height: 29
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: cf7b5b54b70624510800000000000000
-      internalID: 1531892905826170876
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: free-icon-chess-18951078_2
-      rect:
-        serializedVersion: 2
-        x: 176
-        y: 95
-        width: 160
-        height: 198
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 43a7f20ac6edd9130800000000000000
-      internalID: 3575258237327342132
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: free-icon-chess-18951078_3
-      rect:
-        serializedVersion: 2
-        x: 136
-        y: 31
-        width: 240
-        height: 50
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 723944b897c1ddea0800000000000000
-      internalID: -5846485432903888089
+      spriteID: 6071f2ae64e155fc0800000000000000
+      internalID: -3506863444912564474
       vertices: []
       indices: 
       edges: []
@@ -213,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -222,11 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      free-icon-chess-18951078_0: -3632219908940728122
-      free-icon-chess-18951078_1: 1531892905826170876
-      free-icon-chess-18951078_2: 3575258237327342132
-      free-icon-chess-18951078_3: -5846485432903888089
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

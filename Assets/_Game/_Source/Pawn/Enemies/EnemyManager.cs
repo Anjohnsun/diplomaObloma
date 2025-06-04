@@ -4,64 +4,127 @@ using UnityEngine;
 
 public class EnemyManager
 {
-    private List<APawn> _pawns = new List<APawn>();
+    private List<AEnemyPawn> _pawns = new List<AEnemyPawn>();
     private MonoBehaviour _coroutines;
+    private PlayerPawn _player;
+    private Queue<AEnemyPawn> _activeEnemies;
 
     public int EnemyCount => _pawns.Count;
 
-    public EnemyManager(MonoBehaviour coroutineRunner)
+    public EnemyManager(MonoBehaviour coroutineRunner, PlayerPawn player)
     {
         _coroutines = coroutineRunner;
+        _player = player;
     }
-    public void InitPawns(List<APawn> pawns)
+
+    public void InitPawns(List<AEnemyPawn> pawns)
     {
+        ClearSubscriptions();
         _pawns = pawns;
-        foreach (var pawn in _pawns)
+
+        foreach (AEnemyPawn pawn in _pawns)
         {
-            pawn.PawnStats.OnDeath += () => RemovePawn(pawn);
+            if (pawn != null && pawn.PawnStats != null)
+            {
+                AEnemyPawn currentPawn = pawn;
+                currentPawn.PawnStats.OnDeath += () => RemovePawn(currentPawn);
+            }
         }
     }
-    public void AddPawn(APawn pawn) => _pawns.Add(pawn);
-    public void RemovePawn(APawn pawn)
+
+    public void ClearSubscriptions()
     {
-        _pawns.Remove(pawn);
-        if (EnemyCount <= 0)
+        foreach (AEnemyPawn pawn in _pawns)
         {
-            StateManager.Instance.ChangeState<UpgradeState>();
+            if (pawn != null && pawn.PawnStats != null)
+            {
+                pawn.PawnStats.OnDeath -= () => RemovePawn(pawn);
+            }
+        }
+        _pawns.Clear();
+    }
+
+    public void AddPawn(AEnemyPawn pawn)
+    {
+        if (pawn != null)
+        {
+            _pawns.Add(pawn);
+            AEnemyPawn currentPawn = pawn;
+            currentPawn.PawnStats.OnDeath += () => RemovePawn(currentPawn);
         }
     }
-    public void StartEnemyTurn() => _coroutines.StartCoroutine(EnemyTurnCor());
+
+    public void RemovePawn(AEnemyPawn pawn)
+    {
+        if (pawn == null) return;
+
+        if (_pawns.Remove(pawn))
+        {
+            _player.PawnStats.GetEXP(pawn.GivesEXP);
+
+            if (EnemyCount <= 0)
+            {
+                StateManager.Instance.ChangeState<UpgradeState>();
+            }
+        }
+    }
+
+    public void StartEnemyTurn()
+    {
+        _coroutines.StopAllCoroutines();
+        _coroutines.StartCoroutine(EnemyTurnCor());
+    }
+
     private IEnumerator EnemyTurnCor()
     {
-        Debug.Log($"-> EnemyTurn");
         if (EnemyCount <= 0)
         {
             StateManager.Instance.ChangeState<UpgradeState>();
             yield break;
         }
 
-        Debug.Log($"EnemyManager: enemy count: {_pawns.Count}");
         yield return new WaitForSeconds(0.5f);
 
-        if (_pawns.Count == 0)
+        _activeEnemies = new Queue<AEnemyPawn>(_pawns);
+
+        if (_activeEnemies.Count == 0)
         {
             EndEnemyTurn();
             yield break;
         }
 
-        AEnemyPawn pawn;
-        foreach (var enemy in _pawns)
-        {
-            if (enemy == null || enemy.PawnStats.CurrentAP <= 0) continue;
+        PerformNextEnemy();
+    }
 
-            pawn = (AEnemyPawn)enemy;
-            //pawn.PerformActions();
+    private void PerformNextEnemy()
+    {
+        if (_activeEnemies.Count == 0)
+        {
+            _coroutines.StartCoroutine(FinishEnemyTurn());
+            return;
         }
 
+        var currentEnemy = _activeEnemies.Dequeue();
+        currentEnemy.PerformActions(OnEnemyActionComplete);
+    }
+
+    private void OnEnemyActionComplete()
+    {
+        Debug.Log("Конец хода вражеской пешки");
+        _coroutines.StartCoroutine(ContinueEnemyTurn());
+    }
+
+    private IEnumerator ContinueEnemyTurn()
+    {
+        yield return new WaitForSeconds(0.3f);
+        PerformNextEnemy();
+    }
+
+    private IEnumerator FinishEnemyTurn()
+    {
         yield return new WaitForSeconds(0.5f);
         EndEnemyTurn();
     }
-
 
     private void EndEnemyTurn()
     {

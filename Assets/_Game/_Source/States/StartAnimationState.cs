@@ -10,7 +10,7 @@ public class StartAnimationState : IGameState
     private MonoBehaviour _coroutines;
     private GameplayUI _UI;
 
-    public StartAnimationState(TextMeshProUGUI startText, MonoBehaviour coroutines, GameplayUI ui)
+    public StartAnimationState([Inject(Id = "StartText")]TextMeshProUGUI startText, MonoBehaviour coroutines, GameplayUI ui)
     {
         _startText = startText;
         _coroutines = coroutines;
@@ -30,9 +30,9 @@ public class StartAnimationState : IGameState
 
     private IEnumerator StartAnimCor()
     {
-        DOTween.To(() => _startText.color, (x) => _startText.color = x, new Color(_startText.color.r, _startText.color.g, _startText.color.b, 1), 0.7f);
-        yield return new WaitForSeconds(2);
-        DOTween.To(() => _startText.color, (x) => _startText.color = x, new Color(_startText.color.r, _startText.color.g, _startText.color.b, 0), 0.7f)
+        DOTween.To(() => _startText.color, (x) => _startText.color = x, new Color(_startText.color.r, _startText.color.g, _startText.color.b, 1), 3f).SetEase(Ease.InSine);
+        yield return new WaitForSeconds(4);
+        DOTween.To(() => _startText.color, (x) => _startText.color = x, new Color(_startText.color.r, _startText.color.g, _startText.color.b, 0), 1f).SetEase(Ease.InSine)
             .OnComplete(() => LevelManager.Instance.InitializeFirstLevel());
 
         yield return null;
