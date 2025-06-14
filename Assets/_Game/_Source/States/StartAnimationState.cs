@@ -33,7 +33,7 @@ public class StartAnimationState : IGameState
         DOTween.To(() => _startText.color, (x) => _startText.color = x, new Color(_startText.color.r, _startText.color.g, _startText.color.b, 1), 3f).SetEase(Ease.InSine);
         yield return new WaitForSeconds(4);
         DOTween.To(() => _startText.color, (x) => _startText.color = x, new Color(_startText.color.r, _startText.color.g, _startText.color.b, 0), 1f).SetEase(Ease.InSine)
-            .OnComplete(() => LevelManager.Instance.InitializeFirstLevel());
+            .OnComplete(() => LevelManager.Instance.StartNextLevel());
 
         yield return null;
     }

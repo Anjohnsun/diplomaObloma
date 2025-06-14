@@ -136,7 +136,7 @@ public class PlayerPawn : APawn
         if (GridPosition.y == GridManager.Instance.VerticalSize - 1)
         {
             Debug.Log("Start level transition");
-            LevelManager.Instance.StartLevelTransition();
+            LevelManager.Instance.StartNextLevel();
         }
         else if (PawnStats.CurrentAP <= 0)
         {
